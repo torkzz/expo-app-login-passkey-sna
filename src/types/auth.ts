@@ -21,4 +21,23 @@ export interface AuthSession {
   refreshToken?: string;
   expiresAt: number; // Timestamp in ms
   authenticated: boolean;
+  user?: User;
+}
+
+export interface User {
+  id: string;
+  username?: string;
+  email?: string;
+  mobileNumber?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export type AuthenticationMethod = 'passkey' | 'sna';
+
+export interface AuthResult {
+  success: boolean;
+  method: AuthenticationMethod;
+  accessToken?: string;
+  user?: User;
+  message?: string;
 }
