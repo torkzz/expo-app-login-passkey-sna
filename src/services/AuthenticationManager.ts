@@ -38,22 +38,31 @@ export class AuthenticationManager {
    * Initialize the authentication state on application start.
    */
   public async initialize(): Promise<void> {
-    logger.info('Initializing AuthenticationManager');
+    logger.info('AuthenticationManager: Starting initialization');
 
-    const tokens = await tokenManager.restore();
+    try {
+      const tokens = await tokenManager.restore();
+      logger.info('AuthenticationManager: Token restoration complete');
 
-    if (tokens && !tokenManager.isExpired()) {
-      logger.info('Session restored successfully');
-      useAuthStore.getState().setSession({
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        expiresAt: tokens.expiresAt,
-        authenticated: true,
-      });
-      // TODO: Optionally fetch current user profile from backend
-    } else {
-      logger.info('No valid session found during initialization');
-      await this.logout();
+      if (tokens && !tokenManager.isExpired()) {
+        logger.info('AuthenticationManager: Valid session found, restoring...');
+        useAuthStore.getState().setSession({
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          expiresAt: tokens.expiresAt,
+          authenticated: true,
+        });
+        logger.info('AuthenticationManager: Session restored successfully');
+      } else {
+        logger.info('AuthenticationManager: No valid session found during initialization');
+        // Clear everything to be safe, but don't perform network logout
+        useAuthStore.getState().clearSession();
+      }
+    } catch (error) {
+      logger.error('AuthenticationManager: Initialization failed', error);
+      useAuthStore.getState().clearSession();
+    } finally {
+      logger.info('AuthenticationManager: Initialization complete');
     }
   }
 
