@@ -2,6 +2,7 @@ import { AuthApi } from '../api/auth';
 import { useAuthStore } from '../store/authStore';
 import { ENV } from '../config/env';
 import { TokenRequest } from '../types/auth';
+import { tokenManager } from './TokenManager';
 
 /**
  * AuthService Singleton
@@ -34,7 +35,15 @@ export class AuthService {
 
     const expiresAt = Date.now() + response.expires_in * 1000;
 
-    await useAuthStore.getState().setSession({
+    // Update TokenManager
+    await tokenManager.set(
+      response.access_token,
+      expiresAt,
+      response.refresh_token
+    );
+
+    // Update Store
+    useAuthStore.getState().setSession({
       accessToken: response.access_token,
       refreshToken: response.refresh_token,
       expiresAt,
@@ -46,28 +55,15 @@ export class AuthService {
    * Terminate the current session.
    */
   public async logout(): Promise<void> {
-    await useAuthStore.getState().clearSession();
-  }
-
-  /**
-   * Restore the session from persistence.
-   */
-  public async restoreSession(): Promise<void> {
-    await useAuthStore.getState().restoreSession();
-  }
-
-  /**
-   * Check if the user is currently authenticated with a valid token.
-   */
-  public isAuthenticated(): boolean {
-    return useAuthStore.getState().isAuthenticated();
+    await tokenManager.clear();
+    useAuthStore.getState().clearSession();
   }
 
   /**
    * Get the current access token.
    */
   public getAccessToken(): string {
-    return useAuthStore.getState().accessToken;
+    return tokenManager.getAccessToken() || '';
   }
 }
 

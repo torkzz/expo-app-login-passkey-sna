@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../config/env';
 import { logger } from '../utils/logger';
 import { mapError } from '../utils/errorMapper';
-import { useAuthStore } from '../store/authStore';
+import { tokenManager } from '../services/TokenManager';
 
 // Extend AxiosRequestConfig to include metadata
 declare module 'axios' {
@@ -63,7 +63,7 @@ class ApiClient {
         config.headers['X-Request-ID'] = requestId;
 
         // Inject Authorization header
-        const accessToken = useAuthStore.getState().accessToken;
+        const accessToken = tokenManager.getAccessToken();
         if (accessToken) {
           config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
