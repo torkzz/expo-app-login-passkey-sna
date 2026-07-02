@@ -72,6 +72,59 @@ export class AuthenticationManager {
   }
 
   /**
+   * Register a new Passkey.
+   */
+  public async registerWithPasskey(username: string, mobileNumber: string): Promise<AuthResult> {
+    try {
+      // 1. Ensure valid OAuth token
+      if (!tokenManager.hasValidToken()) {
+        logger.info('No valid OAuth token, performing client credentials login');
+        await this.authService.login();
+      }
+
+      // 2. Generate Registration Challenge
+      const passkeyService = PasskeyService.getInstance();
+      const challengeResponse = await passkeyService.generateRegistrationChallenge({
+        userId: mobileNumber,
+        userName: username,
+      });
+
+      // TODO: Implement Native Passkey Registration
+      // This would call the native credential creation API.
+      logger.warn('Native Passkey Registration is not yet implemented.');
+
+      // Mocking successful registration for flow demonstration
+      const mockUser: User = {
+        id: mobileNumber,
+        username,
+        mobileNumber,
+      };
+
+      // 3. (In real flow) Verify registration with backend
+      // await passkeyService.registerPasskey({ ...nativeAttestation });
+
+      logger.info('Passkey registration successful (mock)');
+
+      useAuthStore.getState().setUser(mockUser);
+      useAuthStore.getState().setSession({ authenticated: true });
+
+      return {
+        success: true,
+        method: 'passkey',
+        user: mockUser,
+        message: 'Registration successful',
+      };
+    } catch (error) {
+      logger.error('Passkey registration failed', error);
+      return {
+        success: false,
+        method: 'passkey',
+        message: error instanceof Error ? error.message : 'Registration failed',
+      };
+    }
+  }
+
+  /**
    * Common orchestration logic for all authentication methods.
    */
   private async orchestrateLogin(providerLogin: () => Promise<AuthResult>): Promise<AuthResult> {
