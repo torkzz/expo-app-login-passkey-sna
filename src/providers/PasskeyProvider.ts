@@ -1,7 +1,8 @@
 import { AuthenticationProvider } from './AuthenticationProvider';
 import { PasskeyService } from '../services/PasskeyService';
-import { AuthResult, AuthenticationMethod, User } from '../types/auth';
+import { AuthResult, AuthenticationMethod } from '../types/auth';
 import { logger } from '../utils/logger';
+import { demoPasskeyStore } from '../services/DemoPasskeyStore';
 
 /**
  * PasskeyProvider
@@ -17,32 +18,42 @@ export class PasskeyProvider implements AuthenticationProvider {
   }
 
   public async login(params: { userId: string }): Promise<AuthResult> {
-    logger.info('Starting Passkey login flow', { userId: params.userId });
+    logger.info('PasskeyProvider: Starting login flow', { userId: params.userId });
 
     try {
-      // 1. Request Login Challenge
+      // 1. Check for Demo Passkey (DEMO ONLY)
+      const hasDemoPasskey = await demoPasskeyStore.hasDemoPasskey();
+      if (!hasDemoPasskey) {
+        logger.warn('[DEMO ONLY] No demo registration found for login');
+        return {
+          success: false,
+          code: 'PASSKEY_NOT_REGISTERED',
+          method: this.getType(),
+          message: 'No demo Passkey registration found. Please register first.',
+        };
+      }
+
+      // 2. Request Login Challenge
+      logger.info('PasskeyProvider: Requesting login challenge');
       const challengeResponse = await this.passkeyService.requestLoginChallenge({
         userId: params.userId,
       });
+      logger.info('PasskeyProvider: Login challenge received', {
+        rpId: challengeResponse.rpId,
+        timeout: challengeResponse.timeout,
+        userId: params.userId,
+      });
 
-      // TODO: Implement Native Passkey Assertion
-      // This step requires expo-passkeys or react-native-passkeys.
-      // For now, we are focusing on the orchestration and API layer.
-      logger.warn('Native Passkey Assertion is not yet implemented. Use Expo Go compatible mock if necessary.');
-
-      // Mocking a successful verification for flow demonstration
-      // (In reality, we would call passkeyService.verifyLogin with the native assertion)
-
-      const mockUser: User = {
-        id: params.userId,
-        username: 'demo_user',
-      };
+      // 3. STOP: Native Passkey Assertion is required
+      logger.info('PasskeyProvider: Native Passkey unavailable (Expo Go). Returning challenge to caller.');
 
       return {
-        success: true,
+        success: false,
+        code: 'PASSKEY_NATIVE_REQUIRED',
         method: this.getType(),
-        user: mockUser,
-        message: 'Passkey authentication initiated (Verification pending native implementation)',
+        challenge: challengeResponse,
+        message:
+          'Native Passkey authentication requires an Expo Development Build. Backend challenge generation completed successfully.',
       };
     } catch (error) {
       logger.error('Passkey login failed', error);
@@ -55,7 +66,10 @@ export class PasskeyProvider implements AuthenticationProvider {
   }
 
   public async register(params: { username: string; mobileNumber: string }): Promise<AuthResult> {
-    logger.info('PasskeyProvider: Starting registration flow', params);
+    logger.info('PasskeyProvider: Starting registration flow', {
+      username: params.username,
+      mobileNumber: params.mobileNumber,
+    });
 
     try {
       // 1. Generate Registration Challenge
@@ -64,30 +78,33 @@ export class PasskeyProvider implements AuthenticationProvider {
         userId: params.mobileNumber,
         userName: params.username,
       });
-      logger.info('PasskeyProvider: Registration challenge received');
+      logger.info('PasskeyProvider: Registration challenge received', {
+        rpName: challengeResponse.rp.name,
+        rpId: challengeResponse.rp.id,
+        userId: challengeResponse.user.id,
+        userName: challengeResponse.user.name,
+      });
 
-      // 2. Invoke Native Passkey Registration
-      logger.info('PasskeyProvider: Invoking native Passkey API');
-      // TODO: Implement Native Passkey Registration
-      logger.warn('PasskeyProvider: Native Passkey Registration is not yet implemented.');
-
-      // 3. Verify Registration with Backend
-      logger.info('PasskeyProvider: Verifying registration with backend');
-      // Mocking successful verification for flow demonstration
-      // const registerResponse = await this.passkeyService.registerPasskey({ ...nativeAttestation });
-      logger.info('PasskeyProvider: Passkey registration verified (mock)');
-
-      const mockUser: User = {
-        id: params.mobileNumber,
+      // 2. Save Demo Passkey (DEMO ONLY)
+      logger.info('[DEMO ONLY] PasskeyProvider: Saving demo registration metadata');
+      await demoPasskeyStore.saveDemoPasskey({
         username: params.username,
         mobileNumber: params.mobileNumber,
-      };
+        challenge: challengeResponse,
+        createdAt: Date.now(),
+        registered: true,
+      });
+
+      // 3. STOP: Native Passkey Registration is required
+      logger.info('PasskeyProvider: Native Passkey unavailable (Expo Go). Returning challenge to caller.');
 
       return {
-        success: true,
+        success: false,
+        code: 'PASSKEY_NATIVE_REQUIRED',
         method: this.getType(),
-        user: mockUser,
-        message: 'Registration successful',
+        challenge: challengeResponse,
+        message:
+          'Native Passkey registration requires an Expo Development Build. Backend challenge generation completed successfully.',
       };
     } catch (error) {
       logger.error('PasskeyProvider: Registration failed', error);

@@ -1,3 +1,5 @@
+import { GenerateKeyResponse, LoginRequestResponse } from './passkey';
+
 /**
  * Authentication Type Definitions
  */
@@ -40,4 +42,6 @@ export interface AuthResult {
   accessToken?: string;
   user?: User;
   message?: string;
+  code?: string;
+  challenge?: GenerateKeyResponse | LoginRequestResponse;
 }
