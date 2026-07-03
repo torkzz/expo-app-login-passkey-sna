@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, SafeAreaView, StatusBar, Platform, KeyboardAvoidingView } from 'react-native';
-
+import { View,  StatusBar, Platform, KeyboardAvoidingView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 interface ScreenContainerProps {
   children: React.ReactNode;
   className?: string;

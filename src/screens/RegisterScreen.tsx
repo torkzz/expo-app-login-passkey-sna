@@ -83,7 +83,7 @@ export const RegisterScreen = () => {
               <TextInput
                 label="Mobile Number"
                 placeholder="e.g. +639..."
-                value={value}
+                value="+639178032215"
                 onChangeText={onChange}
                 error={errors.mobileNumber?.message}
                 keyboardType="phone-pad"
