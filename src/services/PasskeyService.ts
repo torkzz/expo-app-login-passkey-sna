@@ -37,8 +37,10 @@ export class PasskeyService {
   /**
    * Complete Passkey registration with the signed challenge.
    */
-  public async registerPasskey(request: RegisterKeyRequest): Promise<RegisterKeyResponse> {
-    return await PasskeyApi.registerKey(request);
+  public async registerKey(
+      request: RegisterKeyRequest
+  ): Promise<RegisterKeyResponse> {
+      return PasskeyApi.registerKey(request);
   }
 
   /**

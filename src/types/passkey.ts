@@ -11,37 +11,65 @@ export interface GenerateKeyRequest {
 }
 
 export interface GenerateKeyResponse {
-  challenge: string;
-  rp: {
-    name: string;
-    id: string;
-  };
-  user: {
-    id: string;
-    name: string;
-    displayName: string;
-  };
-  pubKeyCredParams: {
-    type: string;
-    alg: number;
-  }[];
-  timeout?: number;
-  attestation?: string;
-  authenticatorSelection?: {
-    authenticatorAttachment?: string;
-    residentKey?: string;
-    userVerification?: string;
+  code: number;
+  status: string;
+  message: string;
+  success: boolean;
+
+  transid: string;
+  pin_code: string;
+  ref_code: string;
+  expires_in: number;
+  timestamp: number;
+
+  key: {
+    publicKey: {
+      rp: {
+        name: string;
+        id: string;
+      };
+
+      user: {
+        id: string;
+        name: string;
+        displayName: string;
+      };
+
+      challenge: string;
+
+      timeout: number;
+
+      attestation: string;
+
+      authenticatorSelection?: {
+        authenticatorAttachment?: string;
+        residentKey?: string;
+        userVerification?: string;
+      };
+
+      pubKeyCredParams: {
+        type: string;
+        alg: number;
+      }[];
+
+      excludeCredentials: any[];
+
+      extensions?: Record<string, unknown>;
+    };
   };
 }
 
 export interface RegisterKeyRequest {
-  id: string;
-  rawId: string;
-  type: string;
-  response: {
-    attestationObject: string;
+    pin_code: string;
+    ref_code: string;
+
+    credentialId: string;
+
+    transport?: string[];
+
     clientDataJSON: string;
-  };
+
+    attestationObject: string;
 }
 
 export interface RegisterKeyResponse {
