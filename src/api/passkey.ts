@@ -21,12 +21,41 @@ export const PasskeyApi = {
   /**
    * Generate a new Passkey registration challenge.
    */
-  generateKey: async (request: GenerateKeyRequest): Promise<GenerateKeyResponse> => {
-    logger.info('PasskeyApi: POST ' + API.PASSKEY.GENERATE_KEY);
-    const response = await apiClient.post<GenerateKeyResponse>(API.PASSKEY.GENERATE_KEY, request);
-    return response.data;
-  },
+  generateKey: async (
+    request: GenerateKeyRequest
+  ): Promise<GenerateKeyResponse> => {
+    try {
+      console.log('========== GENERATE KEY ==========');
+      console.log('URL:', API.PASSKEY.GENERATE_KEY);
+      console.log('BODY:');
+      console.log(JSON.stringify(request, null, 2));
+      console.log('==================================');
 
+      const response = await apiClient.post<GenerateKeyResponse>(
+        API.PASSKEY.GENERATE_KEY,
+        request,
+      );
+
+      console.log('========== RESPONSE ==========');
+      console.log(JSON.stringify(response.data, null, 2));
+      console.log('==============================');
+
+      return response.data;
+    } catch (error: any) {
+      console.log('========== GENERATE KEY ERROR ==========');
+
+      if (error.response) {
+        console.log('STATUS:', error.response.status);
+        console.log('DATA:');
+        console.log(JSON.stringify(error.response.data, null, 2));
+      }
+
+      console.log('MESSAGE:', error.message);
+      console.log('========================================');
+
+      throw error;
+    }
+  },
   /**
    * Register a new Passkey credential.
    */
