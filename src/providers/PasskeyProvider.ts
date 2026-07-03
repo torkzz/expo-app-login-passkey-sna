@@ -1,8 +1,17 @@
 import { AuthenticationProvider } from './AuthenticationProvider';
 import { PasskeyService } from '../services/PasskeyService';
-import { AuthResult, AuthenticationMethod, User } from '../types/auth';
+import { AuthResult, AuthenticationMethod } from '../types/auth';
 import { logger } from '../utils/logger';
+import { demoPasskeyStore } from '../services/DemoPasskeyStore';
+import { Platform } from 'react-native';
+import { create,
+  get,
+  isSupported, } from 'react-native-passkeys';
 
+console.log(
+  'Passkey supported:',
+  isSupported(),
+);
 /**
  * PasskeyProvider
  *
@@ -16,91 +25,307 @@ export class PasskeyProvider implements AuthenticationProvider {
     this.passkeyService = passkeyService;
   }
 
-  public async login(params: { userId: string }): Promise<AuthResult> {
-    logger.info('Starting Passkey login flow', { userId: params.userId });
+  private decodeMimeBase64(value: string): string {
+    const prefix = '=?BINARY?B?';
+    const suffix = '?=';
 
-    try {
-      // 1. Request Login Challenge
-      const challengeResponse = await this.passkeyService.requestLoginChallenge({
-        userId: params.userId,
-      });
+    let result = value;
 
-      // TODO: Implement Native Passkey Assertion
-      // This step requires expo-passkeys or react-native-passkeys.
-      // For now, we are focusing on the orchestration and API layer.
-      logger.warn('Native Passkey Assertion is not yet implemented. Use Expo Go compatible mock if necessary.');
-
-      // Mocking a successful verification for flow demonstration
-      // (In reality, we would call passkeyService.verifyLogin with the native assertion)
-
-      const mockUser: User = {
-        id: params.userId,
-        username: 'demo_user',
-      };
-
-      return {
-        success: true,
-        method: this.getType(),
-        user: mockUser,
-        message: 'Passkey authentication initiated (Verification pending native implementation)',
-      };
-    } catch (error) {
-      logger.error('Passkey login failed', error);
-      return {
-        success: false,
-        method: this.getType(),
-        message: error instanceof Error ? error.message : 'Unknown Passkey error',
-      };
+    if (result.startsWith(prefix) && result.endsWith(suffix)) {
+      result = result.substring(prefix.length, result.length - suffix.length);
     }
+
+    return result
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
   }
 
-  public async register(params: { username: string; mobileNumber: string }): Promise<AuthResult> {
-    logger.info('PasskeyProvider: Starting registration flow', params);
+public async login(): Promise<AuthResult> {
+  console.log('PasskeyProvider: Starting login flow');
 
-    try {
-      // 1. Generate Registration Challenge
-      logger.info('PasskeyProvider: Requesting registration challenge');
-      const challengeResponse = await this.passkeyService.generateRegistrationChallenge({
+  try {
+    // -------------------------------------------------------------------------
+    // STEP 0: Load registration identifiers
+    // -------------------------------------------------------------------------
+
+    // TODO:
+    // Replace these with your actual storage implementation.
+    //
+    // Example:
+    // const pinCode = await SecureStore.getItemAsync('pin_code');
+    // const refCode = await SecureStore.getItemAsync('ref_code');
+
+    const pinCode = '';
+    const refCode = '';
+
+    console.log('[LOGIN][STEP 0] Loaded credentials', {
+      pinCode,
+      refCode,
+    });
+
+    if (!pinCode || !refCode) {
+      return {
+        success: false,
+        code: 'PASSKEY_NOT_REGISTERED',
+        method: this.getType(),
+        message:
+          'No registered Passkey information was found on this device.',
+      };
+    }
+
+    // -------------------------------------------------------------------------
+    // STEP 1: Request authentication challenge
+    // -------------------------------------------------------------------------
+
+    console.log('[LOGIN][STEP 1] Requesting login challenge...');
+
+    const challengeResponse =
+      await this.passkeyService.requestLoginChallenge({
+        pinCode,
+        refCode,
+      });
+
+    console.log('[LOGIN][STEP 2] Login challenge received');
+    console.log(JSON.stringify(challengeResponse, null, 2));
+
+    // -------------------------------------------------------------------------
+    // ANDROID
+    // -------------------------------------------------------------------------
+
+    if (Platform.OS === 'android') {
+      console.log('[ANDROID] Native Passkey login');
+
+      const publicKeyOptions = {
+        ...challengeResponse,
+
+        challenge: this.decodeMimeBase64(
+          challengeResponse.challenge,
+        ),
+
+        allowCredentials:
+          challengeResponse.allowCredentials?.map((credential) => ({
+            ...credential,
+            id: this.decodeMimeBase64(credential.id),
+          })),
+      };
+
+      console.log('[ANDROID] PublicKey Options');
+      console.log(JSON.stringify(publicKeyOptions, null, 2));
+
+      // TODO:
+      // const assertion = await get(publicKeyOptions);
+      //
+      // if (!assertion) {
+      //   throw new Error('Passkey login cancelled.');
+      // }
+      //
+      // const loginResponse =
+      //   await this.passkeyService.verifyLogin({
+      //     ...
+      //   });
+      //
+      // return {
+      //   success: loginResponse.success,
+      //   method: this.getType(),
+      //   token: loginResponse.token,
+      //   message: loginResponse.message,
+      // };
+
+      return {
+        success: false,
+        code: 'ANDROID_NATIVE_NOT_IMPLEMENTED',
+        method: this.getType(),
+        challenge: challengeResponse,
+        message:
+          'Android native Passkey login has not been implemented yet.',
+      };
+    }
+
+    // -------------------------------------------------------------------------
+    // iOS fallback
+    // -------------------------------------------------------------------------
+
+    console.log('[IOS] Demo Passkey flow');
+
+    const hasDemoPasskey =
+      await demoPasskeyStore.hasDemoPasskey();
+
+    if (!hasDemoPasskey) {
+      return {
+        success: false,
+        code: 'PASSKEY_NOT_REGISTERED',
+        method: this.getType(),
+        message: 'No demo Passkey registration found.',
+      };
+    }
+
+    return {
+      success: false,
+      code: 'PASSKEY_NATIVE_REQUIRED',
+      method: this.getType(),
+      challenge: challengeResponse,
+      message:
+        'Native Passkey authentication requires an Apple Developer-enabled build.',
+    };
+  } catch (error) {
+    console.log('[LOGIN] FAILED');
+    console.log(error);
+
+    return {
+      success: false,
+      method: this.getType(),
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Unknown Passkey error',
+    };
+  }
+}
+
+public async register(params: { username: string; mobileNumber: string }): Promise<AuthResult> {
+  console.log('[REGISTER] ===== START =====');
+  console.log('[REGISTER] Params', {
+    username: params.username,
+    mobileNumber: params.mobileNumber,
+  });
+
+  try {
+    console.log('[REGISTER][STEP 1] Requesting registration challenge...');
+
+    const challengeResponse =
+      await this.passkeyService.generateRegistrationChallenge({
         userId: params.mobileNumber,
         userName: params.username,
       });
-      logger.info('PasskeyProvider: Registration challenge received');
 
-      // 2. Invoke Native Passkey Registration
-      logger.info('PasskeyProvider: Invoking native Passkey API');
-      // TODO: Implement Native Passkey Registration
-      logger.warn('PasskeyProvider: Native Passkey Registration is not yet implemented.');
+    console.log('[REGISTER][STEP 2] Registration challenge received');
 
-      // 3. Verify Registration with Backend
-      logger.info('PasskeyProvider: Verifying registration with backend');
-      // Mocking successful verification for flow demonstration
-      // const registerResponse = await this.passkeyService.registerPasskey({ ...nativeAttestation });
-      logger.info('PasskeyProvider: Passkey registration verified (mock)');
 
-      const mockUser: User = {
-        id: params.mobileNumber,
-        username: params.username,
-        mobileNumber: params.mobileNumber,
+    console.log('[REGISTER][STEP 2] Challenge Metadata', {
+      rpName: challengeResponse.key.publicKey.rp.name,
+      rpId: challengeResponse.key.publicKey.rp.id,
+      userId: challengeResponse.key.publicKey.user.id,
+      userName: challengeResponse.key.publicKey.user.name,
+    });
+
+    console.log('[REGISTER][STEP 2] Full Challenge');
+    console.log(JSON.stringify(challengeResponse, null, 2));
+
+    if (Platform.OS === 'android') {
+      console.log('[ANDROID] Native Passkey registration');
+
+      const publicKeyOptions = {
+        ...challengeResponse.key.publicKey,
+
+        challenge: this.decodeMimeBase64(
+          challengeResponse.key.publicKey.challenge,
+        ),
+
+        user: {
+          ...challengeResponse.key.publicKey.user,
+          id: this.decodeMimeBase64(
+            challengeResponse.key.publicKey.user.id,
+          ),
+        },
       };
 
+      console.log('[ANDROID] PublicKey Options');
+      console.log("========== CREATE INPUT ==========");
+      console.log(JSON.stringify(publicKeyOptions, null, 2));
+      console.log("==================================");
+      // STEP 1: Create the native passkey
+      const credential = await create(publicKeyOptions);
+
+      if (!credential) {
+        throw new Error('Passkey creation cancelled.');
+      }
+
+      console.log('[ANDROID] Credential');
+      console.log(JSON.stringify(credential, null, 2));
+
+      // STEP 2: Register the credential with the backend
+      const registerResponse = await this.passkeyService.registerKey({
+        pin_code: challengeResponse.pin_code,
+        ref_code: challengeResponse.ref_code,
+
+        credentialId: credential.id,
+
+        transport: credential.response.transports,
+
+        clientDataJSON: credential.response.clientDataJSON,
+
+        attestationObject: credential.response.attestationObject,
+      });
+
+      console.log('[ANDROID] Registration Complete');
+      console.log(JSON.stringify(registerResponse, null, 2));
+
       return {
-        success: true,
+        success: registerResponse.success,
         method: this.getType(),
-        user: mockUser,
-        message: 'Registration successful',
-      };
-    } catch (error) {
-      logger.error('PasskeyProvider: Registration failed', error);
-      return {
-        success: false,
-        method: this.getType(),
-        message: error instanceof Error ? error.message : 'Passkey registration failed',
+        message: registerResponse.message ?? 'Passkey registered successfully.',
       };
     }
+  
+    console.log('[IOS] Saving DemoPasskey...');
+
+    await demoPasskeyStore.saveDemoPasskey({
+      username: params.username,
+      mobileNumber: params.mobileNumber,
+      challenge: challengeResponse,
+      createdAt: Date.now(),
+      registered: true,
+    });
+
+    console.log('[IOS] DemoPasskey saved successfully');
+
+    return {
+      success: false,
+      code: 'PASSKEY_NATIVE_REQUIRED',
+      method: this.getType(),
+      challenge: challengeResponse,
+      message:
+        'Native Passkey registration requires an Apple Developer-enabled build.',
+    };
+  } catch (error: any) {
+    console.log('[REGISTER] FAILED');
+    console.log(error);
+
+    console.log('================ ERROR ================');
+    console.log(error);
+
+    if (error?.response) {
+      console.log('HTTP STATUS:', error.response.status);
+      console.log(
+        'HTTP DATA:',
+        JSON.stringify(error.response.data, null, 2),
+      );
+    }
+
+    if (error?.message) {
+      console.log('MESSAGE:', error.message);
+    }
+
+    if (error?.stack) {
+      console.log('STACK:', error.stack);
+    }
+
+    console.log('=======================================');
+
+    return {
+      success: false,
+      code: 'REGISTER_EXCEPTION',
+      method: this.getType(),
+      message:
+        error?.message ??
+        'Unknown registration exception',
+    };
   }
+}
 
   public async logout(): Promise<void> {
-    logger.info('Passkey provider logout');
+    console.log('Passkey provider logout');
     // No specific local cleanup needed for Passkeys usually
   }
 

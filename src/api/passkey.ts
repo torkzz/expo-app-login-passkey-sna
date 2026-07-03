@@ -21,12 +21,47 @@ export const PasskeyApi = {
   /**
    * Generate a new Passkey registration challenge.
    */
-  generateKey: async (request: GenerateKeyRequest): Promise<GenerateKeyResponse> => {
-    logger.info('PasskeyApi: POST ' + API.PASSKEY.GENERATE_KEY);
-    const response = await apiClient.post<GenerateKeyResponse>(API.PASSKEY.GENERATE_KEY, request);
-    return response.data;
-  },
+  generateKey: async (
+    request: GenerateKeyRequest
+  ): Promise<GenerateKeyResponse> => {
+    try {
+      // Translate camelCase internal types to the backend's lowercase snake_case contract.
+      const body: Record<string, string> = {
+        userid: request.userId,
+        username: request.userName,
+      };
 
+      console.log('========== GENERATE KEY ==========');
+      console.log('URL:', API.PASSKEY.GENERATE_KEY);
+      console.log('BODY:');
+      console.log(JSON.stringify(body, null, 2));
+      console.log('==================================');
+
+      const response = await apiClient.post<GenerateKeyResponse>(
+        API.PASSKEY.GENERATE_KEY,
+        body,
+      );
+
+      console.log('========== RESPONSE ==========');
+      console.log(JSON.stringify(response.data, null, 2));
+      console.log('==============================');
+
+      return response.data;
+    } catch (error: any) {
+      console.log('========== GENERATE KEY ERROR ==========');
+
+      if (error.response) {
+        console.log('STATUS:', error.response.status);
+        console.log('DATA:');
+        console.log(JSON.stringify(error.response.data, null, 2));
+      }
+
+      console.log('MESSAGE:', error.message);
+      console.log('========================================');
+
+      throw error;
+    }
+  },
   /**
    * Register a new Passkey credential.
    */
@@ -39,9 +74,46 @@ export const PasskeyApi = {
   /**
    * Request a Passkey login challenge.
    */
-  loginRequest: async (request: LoginRequest): Promise<LoginRequestResponse> => {
-    const response = await apiClient.post<LoginRequestResponse>(API.PASSKEY.LOGIN_REQUEST, request);
-    return response.data;
+  loginRequest: async (
+    request: LoginRequest,
+  ): Promise<LoginRequestResponse> => {
+
+  const body = {
+    pin_code: request.pinCode,
+    ref_code: request.refCode,
+  };
+
+    console.log('========== LOGIN REQUEST ==========');
+    console.log('URL:', API.PASSKEY.LOGIN_REQUEST);
+    console.log(JSON.stringify(body, null, 2));
+    console.log('===================================');
+
+    try {
+      const response = await apiClient.post<LoginRequestResponse>(
+        API.PASSKEY.LOGIN_REQUEST,
+        body,
+      );
+
+      console.log('========== LOGIN RESPONSE ==========');
+      console.log(JSON.stringify(response.data, null, 2));
+      console.log('====================================');
+
+      return response.data;
+    } catch (error: any) {
+      console.log('========== LOGIN ERROR ==========');
+
+      if (error.response) {
+        console.log('STATUS:', error.response.status);
+        console.log(
+          JSON.stringify(error.response.data, null, 2),
+        );
+      }
+
+      console.log('MESSAGE:', error.message);
+      console.log('==================================');
+
+      throw error;
+    }
   },
 
   /**

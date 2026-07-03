@@ -70,7 +70,7 @@ class ApiClient {
 
         // Log request (Sensitive data exclusion handled by logging policy)
         if (ENV.ENABLE_NETWORK_LOGGING) {
-          logger.info(`Request: ${config.method?.toUpperCase()} ${config.url}`, {
+          console.log(`Request: ${config.method?.toUpperCase()} ${config.url}`, {
             requestId,
             params: config.params,
             // Never log headers or data here to avoid sensitive info leaks
@@ -94,7 +94,7 @@ class ApiClient {
         response.duration = duration;
 
         if (ENV.ENABLE_NETWORK_LOGGING) {
-          logger.info(`Response: ${response.config.method?.toUpperCase()} ${response.config.url}`, {
+          console.log(`Response: ${response.config.method?.toUpperCase()} ${response.config.url}`, {
             status: response.status,
             duration: `${duration}ms`,
             requestId,

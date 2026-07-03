@@ -34,13 +34,29 @@ export const RegisterScreen = () => {
   });
 
   const onRegister = async (data: RegistrationFormValues) => {
-    setError(null);
-    setLoading(true);
-    const result = await authenticationManager.registerWithPasskey(data.username, data.mobileNumber);
-    setLoading(false);
+    console.log("[SCREEN] Register clicked", data);
 
-    if (!result.success) {
-      setError(result.message || 'Registration failed');
+    try {
+      setError(null);
+      setLoading(true);
+
+      console.log("[SCREEN] Calling AuthenticationManager.registerWithPasskey()");
+
+      const result = await authenticationManager.registerWithPasskey(
+        data.username,
+        data.mobileNumber
+      );
+
+      console.log("[SCREEN] Result:", result);
+
+      if (!result.success) {
+        setError(result.message || "Registration failed");
+      }
+    } catch (e) {
+      console.log("[SCREEN] EXCEPTION");
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,7 +99,7 @@ export const RegisterScreen = () => {
               <TextInput
                 label="Mobile Number"
                 placeholder="e.g. +639..."
-                value="+639178032215"
+                value={value}
                 onChangeText={onChange}
                 error={errors.mobileNumber?.message}
                 keyboardType="phone-pad"
