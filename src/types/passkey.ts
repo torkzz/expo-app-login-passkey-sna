@@ -79,7 +79,8 @@ export interface RegisterKeyResponse {
 }
 
 export interface LoginRequest {
-  userId: string;
+   pinCode: string;
+    refCode: string;
 }
 
 export interface LoginRequestResponse {

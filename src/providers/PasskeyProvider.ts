@@ -41,22 +41,57 @@ export class PasskeyProvider implements AuthenticationProvider {
       .replace(/=+$/, '');
   }
 
-public async login(params: { userId: string }): Promise<AuthResult> {
-  console.log('PasskeyProvider: Starting login flow', {
-    userId: params.userId,
-  });
+public async login(): Promise<AuthResult> {
+  console.log('PasskeyProvider: Starting login flow');
 
   try {
-    // STEP 1
+    // -------------------------------------------------------------------------
+    // STEP 0: Load registration identifiers
+    // -------------------------------------------------------------------------
+
+    // TODO:
+    // Replace these with your actual storage implementation.
+    //
+    // Example:
+    // const pinCode = await SecureStore.getItemAsync('pin_code');
+    // const refCode = await SecureStore.getItemAsync('ref_code');
+
+    const pinCode = '';
+    const refCode = '';
+
+    console.log('[LOGIN][STEP 0] Loaded credentials', {
+      pinCode,
+      refCode,
+    });
+
+    if (!pinCode || !refCode) {
+      return {
+        success: false,
+        code: 'PASSKEY_NOT_REGISTERED',
+        method: this.getType(),
+        message:
+          'No registered Passkey information was found on this device.',
+      };
+    }
+
+    // -------------------------------------------------------------------------
+    // STEP 1: Request authentication challenge
+    // -------------------------------------------------------------------------
+
     console.log('[LOGIN][STEP 1] Requesting login challenge...');
 
     const challengeResponse =
       await this.passkeyService.requestLoginChallenge({
-        userId: params.userId,
+        pinCode,
+        refCode,
       });
 
     console.log('[LOGIN][STEP 2] Login challenge received');
     console.log(JSON.stringify(challengeResponse, null, 2));
+
+    // -------------------------------------------------------------------------
+    // ANDROID
+    // -------------------------------------------------------------------------
 
     if (Platform.OS === 'android') {
       console.log('[ANDROID] Native Passkey login');
@@ -86,7 +121,9 @@ public async login(params: { userId: string }): Promise<AuthResult> {
       // }
       //
       // const loginResponse =
-      //   await this.passkeyService.verifyLogin(assertion);
+      //   await this.passkeyService.verifyLogin({
+      //     ...
+      //   });
       //
       // return {
       //   success: loginResponse.success,
@@ -105,7 +142,10 @@ public async login(params: { userId: string }): Promise<AuthResult> {
       };
     }
 
-    // iOS fallback (until native implementation)
+    // -------------------------------------------------------------------------
+    // iOS fallback
+    // -------------------------------------------------------------------------
+
     console.log('[IOS] Demo Passkey flow');
 
     const hasDemoPasskey =

@@ -78,9 +78,10 @@ export const PasskeyApi = {
     request: LoginRequest,
   ): Promise<LoginRequestResponse> => {
 
-    const body = {
-      userid: request.userId,
-    };
+  const body = {
+    pin_code: request.pinCode,
+    ref_code: request.refCode,
+  };
 
     console.log('========== LOGIN REQUEST ==========');
     console.log('URL:', API.PASSKEY.LOGIN_REQUEST);
