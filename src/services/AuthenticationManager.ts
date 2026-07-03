@@ -38,22 +38,31 @@ export class AuthenticationManager {
    * Initialize the authentication state on application start.
    */
   public async initialize(): Promise<void> {
-    logger.info('Initializing AuthenticationManager');
+    logger.info('AuthenticationManager: Starting initialization');
 
-    const tokens = await tokenManager.restore();
+    try {
+      const tokens = await tokenManager.restore();
+      logger.info('AuthenticationManager: Token restoration complete');
 
-    if (tokens && !tokenManager.isExpired()) {
-      logger.info('Session restored successfully');
-      useAuthStore.getState().setSession({
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        expiresAt: tokens.expiresAt,
-        authenticated: true,
-      });
-      // TODO: Optionally fetch current user profile from backend
-    } else {
-      logger.info('No valid session found during initialization');
-      await this.logout();
+      if (tokens && !tokenManager.isExpired()) {
+        logger.info('AuthenticationManager: Valid session found, restoring...');
+        useAuthStore.getState().setSession({
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          expiresAt: tokens.expiresAt,
+          authenticated: true,
+        });
+        logger.info('AuthenticationManager: Session restored successfully');
+      } else {
+        logger.info('AuthenticationManager: No valid session found during initialization');
+        // Clear everything to be safe, but don't perform network logout
+        useAuthStore.getState().clearSession();
+      }
+    } catch (error) {
+      logger.error('AuthenticationManager: Initialization failed', error);
+      useAuthStore.getState().clearSession();
+    } finally {
+      logger.info('AuthenticationManager: Initialization complete');
     }
   }
 
@@ -75,51 +84,39 @@ export class AuthenticationManager {
    * Register a new Passkey.
    */
   public async registerWithPasskey(username: string, mobileNumber: string): Promise<AuthResult> {
+    logger.info('AuthenticationManager: Starting registerWithPasskey', { username, mobileNumber });
     try {
       // 1. Ensure valid OAuth token
       if (!tokenManager.hasValidToken()) {
-        logger.info('No valid OAuth token, performing client credentials login');
+        logger.info('AuthenticationManager: No valid OAuth token, performing client credentials login');
         await this.authService.login();
+        logger.info('AuthenticationManager: OAuth login successful');
+      } else {
+        logger.info('AuthenticationManager: Using existing valid OAuth token');
       }
 
-      // 2. Generate Registration Challenge
-      const passkeyService = PasskeyService.getInstance();
-      const challengeResponse = await passkeyService.generateRegistrationChallenge({
-        userId: mobileNumber,
-        userName: username,
-      });
+      // 2. Delegate to PasskeyProvider for registration flow
+      logger.info('AuthenticationManager: Delegating to PasskeyProvider.register');
+      const result = await this.passkeyProvider.register({ username, mobileNumber });
 
-      // TODO: Implement Native Passkey Registration
-      // This would call the native credential creation API.
-      logger.warn('Native Passkey Registration is not yet implemented.');
+      if (result.success && result.user) {
+        logger.info('AuthenticationManager: Passkey registration successful');
+        useAuthStore.getState().setUser(result.user);
+        useAuthStore.getState().setSession({ authenticated: true });
+      } else {
+        logger.warn('AuthenticationManager: Passkey registration failed', result.message);
+      }
 
-      // Mocking successful registration for flow demonstration
-      const mockUser: User = {
-        id: mobileNumber,
-        username,
-        mobileNumber,
-      };
+      return result;
+    } catch (error: any) {
+      logger.error('AuthenticationManager: registerWithPasskey failed', error);
 
-      // 3. (In real flow) Verify registration with backend
-      // await passkeyService.registerPasskey({ ...nativeAttestation });
+      const errorMessage = error?.message || error?.code || 'Registration failed';
 
-      logger.info('Passkey registration successful (mock)');
-
-      useAuthStore.getState().setUser(mockUser);
-      useAuthStore.getState().setSession({ authenticated: true });
-
-      return {
-        success: true,
-        method: 'passkey',
-        user: mockUser,
-        message: 'Registration successful',
-      };
-    } catch (error) {
-      logger.error('Passkey registration failed', error);
       return {
         success: false,
         method: 'passkey',
-        message: error instanceof Error ? error.message : 'Registration failed',
+        message: errorMessage,
       };
     }
   }

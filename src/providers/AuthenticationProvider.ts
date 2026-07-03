@@ -12,6 +12,11 @@ export interface AuthenticationProvider {
   login(params?: unknown): Promise<AuthResult>;
 
   /**
+   * Execute the registration flow for the provider.
+   */
+  register(params?: unknown): Promise<AuthResult>;
+
+  /**
    * Perform provider-specific logout actions.
    */
   logout(): Promise<void>;

@@ -60,6 +60,11 @@ export class SNAProvider implements AuthenticationProvider {
     }
   }
 
+  public async register(params: { phoneNumber: string; username: string }): Promise<AuthResult> {
+    logger.info('SNA registration flow started (SNA typically uses login for first-time verification)', params);
+    return this.login({ phoneNumber: params.phoneNumber });
+  }
+
   public async logout(): Promise<void> {
     logger.info('SNA provider logout');
   }

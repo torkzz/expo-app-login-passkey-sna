@@ -1,5 +1,6 @@
 import { apiClient } from './axios';
 import { API } from '../config/api';
+import { logger } from '../utils/logger';
 import {
   GenerateKeyRequest,
   GenerateKeyResponse,
@@ -21,6 +22,7 @@ export const PasskeyApi = {
    * Generate a new Passkey registration challenge.
    */
   generateKey: async (request: GenerateKeyRequest): Promise<GenerateKeyResponse> => {
+    logger.info('PasskeyApi: POST ' + API.PASSKEY.GENERATE_KEY);
     const response = await apiClient.post<GenerateKeyResponse>(API.PASSKEY.GENERATE_KEY, request);
     return response.data;
   },
@@ -29,6 +31,7 @@ export const PasskeyApi = {
    * Register a new Passkey credential.
    */
   registerKey: async (request: RegisterKeyRequest): Promise<RegisterKeyResponse> => {
+    logger.info('PasskeyApi: POST ' + API.PASSKEY.REGISTER);
     const response = await apiClient.post<RegisterKeyResponse>(API.PASSKEY.REGISTER, request);
     return response.data;
   },

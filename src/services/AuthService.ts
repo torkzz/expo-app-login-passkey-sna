@@ -3,6 +3,7 @@ import { useAuthStore } from '../store/authStore';
 import { ENV } from '../config/env';
 import { TokenRequest } from '../types/auth';
 import { tokenManager } from './TokenManager';
+import { logger } from '../utils/logger';
 
 /**
  * AuthService Singleton
@@ -25,13 +26,16 @@ export class AuthService {
    * Obtain an OAuth2 token and establish a session.
    */
   public async login(): Promise<void> {
+    logger.info('AuthService: Starting login');
     const request: TokenRequest = {
       grant_type: 'client_credentials',
       client_id: ENV.VERIFY_CLIENT_ID,
       client_secret: ENV.VERIFY_CLIENT_SECRET,
     };
 
+    logger.info('AuthService: Requesting token from AuthApi');
     const response = await AuthApi.getToken(request);
+    logger.info('AuthService: Token received successfully');
 
     const expiresAt = Date.now() + response.expires_in * 1000;
 
