@@ -66,27 +66,36 @@ export class PasskeyProvider implements AuthenticationProvider {
   }
 
   public async register(params: { username: string; mobileNumber: string }): Promise<AuthResult> {
-    logger.info('PasskeyProvider: Starting registration flow', {
+    logger.info('[REGISTER] ===== START =====');
+    logger.info('[REGISTER] Params', {
       username: params.username,
       mobileNumber: params.mobileNumber,
     });
 
     try {
-      // 1. Generate Registration Challenge
-      logger.info('PasskeyProvider: Requesting registration challenge');
+      // STEP 1
+      logger.info('[REGISTER][STEP 1] Requesting registration challenge...');
+
       const challengeResponse = await this.passkeyService.generateRegistrationChallenge({
         userId: params.mobileNumber,
         userName: params.username,
       });
-      logger.info('PasskeyProvider: Registration challenge received', {
-        rpName: challengeResponse.rp.name,
-        rpId: challengeResponse.rp.id,
-        userId: challengeResponse.user.id,
-        userName: challengeResponse.user.name,
+
+      logger.info('[REGISTER][STEP 2] Registration challenge received');
+
+      logger.info('[REGISTER][STEP 2] Challenge Metadata', {
+        rpName: challengeResponse.rp?.name,
+        rpId: challengeResponse.rp?.id,
+        userId: challengeResponse.user?.id,
+        userName: challengeResponse.user?.name,
       });
 
-      // 2. Save Demo Passkey (DEMO ONLY)
-      logger.info('[DEMO ONLY] PasskeyProvider: Saving demo registration metadata');
+      logger.info('[REGISTER][STEP 2] Full Challenge');
+      console.log(JSON.stringify(challengeResponse, null, 2));
+
+      // STEP 3
+      logger.info('[REGISTER][STEP 3] Saving DemoPasskey...');
+
       await demoPasskeyStore.saveDemoPasskey({
         username: params.username,
         mobileNumber: params.mobileNumber,
@@ -95,8 +104,9 @@ export class PasskeyProvider implements AuthenticationProvider {
         registered: true,
       });
 
-      // 3. STOP: Native Passkey Registration is required
-      logger.info('PasskeyProvider: Native Passkey unavailable (Expo Go). Returning challenge to caller.');
+      logger.info('[REGISTER][STEP 4] DemoPasskey saved successfully');
+
+      logger.info('[REGISTER][STEP 5] Returning PASSKEY_NATIVE_REQUIRED');
 
       return {
         success: false,
@@ -106,12 +116,35 @@ export class PasskeyProvider implements AuthenticationProvider {
         message:
           'Native Passkey registration requires an Expo Development Build. Backend challenge generation completed successfully.',
       };
-    } catch (error) {
-      logger.error('PasskeyProvider: Registration failed', error);
+    } catch (error: any) {
+      logger.error('[REGISTER] FAILED');
+      logger.error(error);
+
+      console.log('================ ERROR ================');
+      console.log(error);
+
+      if (error?.response) {
+        console.log('HTTP STATUS:', error.response.status);
+        console.log('HTTP DATA:', JSON.stringify(error.response.data, null, 2));
+      }
+
+      if (error?.message) {
+        console.log('MESSAGE:', error.message);
+      }
+
+      if (error?.stack) {
+        console.log('STACK:', error.stack);
+      }
+
+      console.log('=======================================');
+
       return {
         success: false,
+        code: 'REGISTER_EXCEPTION',
         method: this.getType(),
-        message: error instanceof Error ? error.message : 'Passkey registration failed',
+        message:
+          error?.message ??
+          'Unknown registration exception',
       };
     }
   }

@@ -86,10 +86,13 @@ export class AuthenticationManager {
   public async registerWithPasskey(username: string, mobileNumber: string): Promise<AuthResult> {
     logger.info('AuthenticationManager: Starting registerWithPasskey', { username, mobileNumber });
     try {
+      console.log("A");
       // 1. Ensure valid OAuth token
       if (!tokenManager.hasValidToken()) {
+         console.log("B");
         logger.info('AuthenticationManager: No valid OAuth token, performing client credentials login');
         await this.authService.login();
+           console.log("C");
         logger.info('AuthenticationManager: OAuth login successful');
       } else {
         logger.info('AuthenticationManager: Using existing valid OAuth token');

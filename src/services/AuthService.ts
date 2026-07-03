@@ -25,34 +25,69 @@ export class AuthService {
   /**
    * Obtain an OAuth2 token and establish a session.
    */
+  // public async login(): Promise<void> {
+  //   logger.info('AuthService: Starting login');
+  //   const request: TokenRequest = {
+  //     grant_type: 'client_credentials',
+  //     client_id: ENV.VERIFY_CLIENT_ID,
+  //     client_secret: ENV.VERIFY_CLIENT_SECRET,
+  //   };
+
+  //   logger.info('AuthService: Requesting token from AuthApi');
+  //   const response = await AuthApi.getToken(request);
+  //   logger.info('AuthService: Token received successfully');
+
+  //   const expiresAt = Date.now() + response.expires_in * 1000;
+
+  //   // Update TokenManager
+  //   await tokenManager.set(
+  //     response.access_token,
+  //     expiresAt,
+  //     response.refresh_token
+  //   );
+
+  //   // Update Store
+  //   useAuthStore.getState().setSession({
+  //     accessToken: response.access_token,
+  //     refreshToken: response.refresh_token,
+  //     expiresAt,
+  //     authenticated: true,
+  //   });
+  // }
   public async login(): Promise<void> {
-    logger.info('AuthService: Starting login');
+    console.log("[AUTH] STEP 1 - Starting login");
+
     const request: TokenRequest = {
-      grant_type: 'client_credentials',
+      grant_type: "client_credentials",
       client_id: ENV.VERIFY_CLIENT_ID,
       client_secret: ENV.VERIFY_CLIENT_SECRET,
     };
 
-    logger.info('AuthService: Requesting token from AuthApi');
+    console.log("[AUTH] STEP 2 - Calling AuthApi.getToken()");
     const response = await AuthApi.getToken(request);
-    logger.info('AuthService: Token received successfully');
+
+    console.log("[AUTH] STEP 3 - Token received");
 
     const expiresAt = Date.now() + response.expires_in * 1000;
 
-    // Update TokenManager
+    console.log("[AUTH] STEP 4 - Calling tokenManager.set()");
     await tokenManager.set(
       response.access_token,
       expiresAt,
       response.refresh_token
     );
 
-    // Update Store
+    console.log("[AUTH] STEP 5 - tokenManager.set() completed");
+
+    console.log("[AUTH] STEP 6 - Updating Zustand");
     useAuthStore.getState().setSession({
       accessToken: response.access_token,
       refreshToken: response.refresh_token,
       expiresAt,
       authenticated: true,
     });
+
+    console.log("[AUTH] STEP 7 - Login complete");
   }
 
   /**
