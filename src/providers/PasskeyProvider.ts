@@ -54,6 +54,51 @@ export class PasskeyProvider implements AuthenticationProvider {
     }
   }
 
+  public async register(params: { username: string; mobileNumber: string }): Promise<AuthResult> {
+    logger.info('PasskeyProvider: Starting registration flow', params);
+
+    try {
+      // 1. Generate Registration Challenge
+      logger.info('PasskeyProvider: Requesting registration challenge');
+      const challengeResponse = await this.passkeyService.generateRegistrationChallenge({
+        userId: params.mobileNumber,
+        userName: params.username,
+      });
+      logger.info('PasskeyProvider: Registration challenge received');
+
+      // 2. Invoke Native Passkey Registration
+      logger.info('PasskeyProvider: Invoking native Passkey API');
+      // TODO: Implement Native Passkey Registration
+      logger.warn('PasskeyProvider: Native Passkey Registration is not yet implemented.');
+
+      // 3. Verify Registration with Backend
+      logger.info('PasskeyProvider: Verifying registration with backend');
+      // Mocking successful verification for flow demonstration
+      // const registerResponse = await this.passkeyService.registerPasskey({ ...nativeAttestation });
+      logger.info('PasskeyProvider: Passkey registration verified (mock)');
+
+      const mockUser: User = {
+        id: params.mobileNumber,
+        username: params.username,
+        mobileNumber: params.mobileNumber,
+      };
+
+      return {
+        success: true,
+        method: this.getType(),
+        user: mockUser,
+        message: 'Registration successful',
+      };
+    } catch (error) {
+      logger.error('PasskeyProvider: Registration failed', error);
+      return {
+        success: false,
+        method: this.getType(),
+        message: error instanceof Error ? error.message : 'Passkey registration failed',
+      };
+    }
+  }
+
   public async logout(): Promise<void> {
     logger.info('Passkey provider logout');
     // No specific local cleanup needed for Passkeys usually
