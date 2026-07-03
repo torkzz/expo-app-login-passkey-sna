@@ -51,7 +51,11 @@ export const LoginScreen = () => {
       setError(result.message || 'SNA login failed');
     }
   };
-
+// return (
+//     <ScreenContainer>
+//         <Text>Hello</Text>
+//     </ScreenContainer>
+// );
   return (
     <ScreenContainer>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>

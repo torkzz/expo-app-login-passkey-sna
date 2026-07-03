@@ -33,16 +33,33 @@ export const RegisterScreen = () => {
     },
   });
 
-  const onRegister = async (data: RegistrationFormValues) => {
+const onRegister = async (data: RegistrationFormValues) => {
+  try {
     setError(null);
     setLoading(true);
-    const result = await authenticationManager.registerWithPasskey(data.username, data.mobileNumber);
-    setLoading(false);
+
+    console.log("Register clicked", data);
+
+    const result = await authenticationManager.registerWithPasskey(
+      data.username,
+      data.mobileNumber
+    );
+
+    console.log("Register result", result);
 
     if (!result.success) {
-      setError(result.message || 'Registration failed');
+      setError(result.message ?? "Registration failed");
     }
-  };
+  } catch (e) {
+    console.error("Registration exception", e);
+
+    setError(
+      e instanceof Error ? e.message : "Unknown registration error"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <ScreenContainer>
