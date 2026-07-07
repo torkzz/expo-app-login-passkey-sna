@@ -66,9 +66,38 @@ export const PasskeyApi = {
    * Register a new Passkey credential.
    */
   registerKey: async (request: RegisterKeyRequest): Promise<RegisterKeyResponse> => {
-    logger.info('PasskeyApi: POST ' + API.PASSKEY.REGISTER);
-    const response = await apiClient.post<RegisterKeyResponse>(API.PASSKEY.REGISTER, request);
-    return response.data;
+    console.log('========== REGISTER KEY ==========');
+    console.log('URL:', API.PASSKEY.REGISTER);
+    console.log('PAYLOAD:');
+    console.log(JSON.stringify(request, null, 2));
+    console.log('==================================');
+
+    try {
+      const response = await apiClient.post<RegisterKeyResponse>(
+        API.PASSKEY.REGISTER,
+        request,
+      );
+
+      console.log('========== REGISTER RESPONSE ==========');
+      console.log('STATUS:', response.status);
+      console.log(JSON.stringify(response.data, null, 2));
+      console.log('=======================================');
+
+      return response.data;
+    } catch (error: any) {
+      console.log('========== REGISTER KEY ERROR ==========');
+
+      if (error.response) {
+        console.log('STATUS:', error.response.status);
+        console.log('DATA:');
+        console.log(JSON.stringify(error.response.data, null, 2));
+      }
+
+      console.log('MESSAGE:', error.message);
+      console.log('========================================');
+
+      throw error;
+    }
   },
 
   /**

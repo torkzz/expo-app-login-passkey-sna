@@ -10,10 +10,10 @@ export const API = {
     TOKEN: '/auth/token',
   },
   PASSKEY: {
-    GENERATE_KEY: '/passkey/api/generate/key',
-    REGISTER: '/passkey/api/register/key',
-    LOGIN_REQUEST: '/passkey/api/login/request',
-    LOGIN_VERIFY: '/passkey/api/login/verify',
+    GENERATE_KEY: '/passkey/generate/key',
+    REGISTER: '/passkey/register/key',
+    LOGIN_REQUEST: '/passkey/login/request',
+    LOGIN_VERIFY: '/passkey/login/verify',
   },
   SNA: {
     LOGIN_REQUEST: '/sna/api/login/request',

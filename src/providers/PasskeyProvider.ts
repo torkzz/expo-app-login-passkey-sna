@@ -215,50 +215,77 @@ public async register(params: { username: string; mobileNumber: string }): Promi
     if (Platform.OS === 'android') {
       console.log('[ANDROID] Native Passkey registration');
 
+      // -----------------------------------------------------------------------
+      // STEP 3: Build publicKey options for create()
+      // -----------------------------------------------------------------------
+      const rawPublicKey = challengeResponse.key.publicKey;
+
+      const decodedChallenge = this.decodeMimeBase64(rawPublicKey.challenge);
+      const decodedUserId   = this.decodeMimeBase64(rawPublicKey.user.id);
+
+      console.log('[ANDROID][STEP 3] Raw challenge (backend):', rawPublicKey.challenge);
+      console.log('[ANDROID][STEP 3] Decoded challenge (Base64URL):', decodedChallenge);
+      console.log('[ANDROID][STEP 3] Raw user.id (backend):', rawPublicKey.user.id);
+      console.log('[ANDROID][STEP 3] Decoded user.id (Base64URL):', decodedUserId);
+
       const publicKeyOptions = {
-        ...challengeResponse.key.publicKey,
-
-        challenge: this.decodeMimeBase64(
-          challengeResponse.key.publicKey.challenge,
-        ),
-
+        ...rawPublicKey,
+        challenge: decodedChallenge,
         user: {
-          ...challengeResponse.key.publicKey.user,
-          id: this.decodeMimeBase64(
-            challengeResponse.key.publicKey.user.id,
-          ),
+          ...rawPublicKey.user,
+          id: decodedUserId,
         },
       };
 
-      console.log('[ANDROID] PublicKey Options');
-      console.log("========== CREATE INPUT ==========");
+      console.log('[ANDROID][STEP 3] Full publicKeyOptions passed to create():');
+      console.log('========== CREATE INPUT ==========');
       console.log(JSON.stringify(publicKeyOptions, null, 2));
-      console.log("==================================");
-      // STEP 1: Create the native passkey
+      console.log('==================================');
+
+      // -----------------------------------------------------------------------
+      // STEP 4: Invoke native passkey creation
+      // -----------------------------------------------------------------------
+      console.log('[ANDROID][STEP 4] Calling create()...');
       const credential = await create(publicKeyOptions);
 
       if (!credential) {
-        throw new Error('Passkey creation cancelled.');
+        throw new Error('Passkey creation cancelled or not supported.');
       }
 
-      console.log('[ANDROID] Credential');
+      console.log('[ANDROID][STEP 4] Credential received.');
+      console.log('[ANDROID][STEP 4] credential.id:', credential.id);
+      console.log('[ANDROID][STEP 4] credential.rawId:', credential.rawId);
+      console.log('[ANDROID][STEP 4] credential.type:', credential.type);
+      console.log('[ANDROID][STEP 4] credential.authenticatorAttachment:', credential.authenticatorAttachment);
+      console.log('[ANDROID][STEP 4] credential.response keys:', Object.keys(credential.response));
+      console.log('[ANDROID][STEP 4] credential.response.clientDataJSON:', credential.response.clientDataJSON);
+      console.log('[ANDROID][STEP 4] credential.response.attestationObject:', credential.response.attestationObject);
+      console.log('[ANDROID][STEP 4] credential.response.transports:', credential.response.transports);
+      console.log('[ANDROID][STEP 4] Full credential:');
       console.log(JSON.stringify(credential, null, 2));
 
-      // STEP 2: Register the credential with the backend
-      const registerResponse = await this.passkeyService.registerKey({
-        pin_code: challengeResponse.pin_code,
-        ref_code: challengeResponse.ref_code,
-
-        credentialId: credential.id,
-
-        transport: credential.response.transports,
-
-        clientDataJSON: credential.response.clientDataJSON,
-
+      // -----------------------------------------------------------------------
+      // STEP 5: Build registerKey payload
+      // -----------------------------------------------------------------------
+      const registerPayload = {
+        pin_code:          challengeResponse.pin_code,
+        ref_code:          challengeResponse.ref_code,
+        credentialId:      credential.id,
+        transports:        credential.response.transports,
+        clientDataJSON:    credential.response.clientDataJSON,
         attestationObject: credential.response.attestationObject,
-      });
+      };
 
-      console.log('[ANDROID] Registration Complete');
+      console.log('[ANDROID][STEP 5] registerKey payload:');
+      console.log(JSON.stringify(registerPayload, null, 2));
+
+      // -----------------------------------------------------------------------
+      // STEP 6: Submit to backend
+      // -----------------------------------------------------------------------
+      console.log('[ANDROID][STEP 6] Calling registerKey API...');
+      const registerResponse = await this.passkeyService.registerKey(registerPayload);
+
+      console.log('[ANDROID][STEP 6] registerKey response:');
       console.log(JSON.stringify(registerResponse, null, 2));
 
       return {

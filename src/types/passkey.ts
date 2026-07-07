@@ -65,7 +65,11 @@ export interface RegisterKeyRequest {
 
     credentialId: string;
 
-    transport?: string[];
+    /**
+     * WebAuthn authenticator transports (e.g. ['internal', 'hybrid']).
+     * Field name matches credential.response.transports from react-native-passkeys.
+     */
+    transports?: string[];
 
     clientDataJSON: string;
 
