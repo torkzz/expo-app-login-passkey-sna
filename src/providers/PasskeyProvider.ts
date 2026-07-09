@@ -71,6 +71,8 @@ export class PasskeyProvider implements AuthenticationProvider {
     // -------------------------------------------------------------------------
     const pinCode = await SecureStore.getItemAsync('pin_code') || '';
     const refCode = await SecureStore.getItemAsync('ref_code') || '';
+    const storedUsername = await SecureStore.getItemAsync('username') || '';
+    const storedMobile = await SecureStore.getItemAsync('mobile_number') || '';
 
     console.log('[LOGIN][STEP 0] Loaded credentials', {
       pinCode,
@@ -127,11 +129,12 @@ export class PasskeyProvider implements AuthenticationProvider {
           publicKeyChallenge.challenge,
         ),
 
-        allowCredentials:
-          publicKeyChallenge.allowCredentials?.map((credential) => ({
-            ...credential,
-            id: this.decodeMimeBase64(credential.id),
-          })),
+        // Pass an empty allowCredentials array to trigger the discoverable-credential
+        // (resident key) flow. Android Credential Manager will show a selector sheet
+        // listing all passkeys saved for this RP (dev.m360.com.ph), letting the user
+        // pick which one to use. If a specific credential ID is provided instead,
+        // Android silently auto-selects it with no UI shown.
+        allowCredentials: [],
       };
 
       console.log('[ANDROID] PublicKey Options');
@@ -166,8 +169,9 @@ export class PasskeyProvider implements AuthenticationProvider {
         method: this.getType(),
         accessToken: loginResponse.token,
         user: {
-          id: pinCode,
-          mobileNumber: pinCode,
+          id: loginResponse.userid || storedMobile,
+          username: storedUsername,
+          mobileNumber: loginResponse.userid || storedMobile,
         },
         message: loginResponse.message,
       };
@@ -324,6 +328,8 @@ public async register(params: { username: string; mobileNumber: string }): Promi
         await Promise.all([
           SecureStore.setItemAsync('pin_code', challengeResponse.pin_code),
           SecureStore.setItemAsync('ref_code', challengeResponse.ref_code),
+          SecureStore.setItemAsync('username', params.username),
+          SecureStore.setItemAsync('mobile_number', params.mobileNumber),
         ]);
       }
 
