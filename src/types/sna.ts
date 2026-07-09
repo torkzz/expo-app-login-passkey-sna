@@ -3,23 +3,28 @@
  */
 
 export interface SNALoginRequest {
-  phoneNumber: string;
+  to: string;
+  from: string;
 }
 
 export interface SNALoginResponse {
   success: boolean;
-  checkUrl: string;
-  referenceId: string;
+  code?: number;
+  check_url?: string;
+  transid?: string;
+  ref_code?: string;
   message?: string;
 }
 
 export interface SNAVerifyRequest {
-  referenceId: string;
+  pin_code: string;
+  ref_code: string;
 }
 
 export interface SNAVerifyResponse {
   success: boolean;
-  status: 'COMPLETED' | 'PENDING' | 'FAILED';
+  code?: number;
+  status?: string;
   message?: string;
 }
 

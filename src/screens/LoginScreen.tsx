@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../navigation/types';
@@ -42,14 +42,29 @@ export const LoginScreen = () => {
       return;
     }
 
-    setError(null);
-    setLoading(true);
-    const result = await authenticationManager.loginWithSNA(identifier);
-    setLoading(false);
+    Alert.alert(
+      'Mobile Network Verification',
+      'Silent Network Authentication verifies your number directly via the cellular network. Please ensure your mobile data is turned ON and active (Wi-Fi can remain active).',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Verify',
+          onPress: async () => {
+            setError(null);
+            setLoading(true);
+            const result = await authenticationManager.loginWithSNA(identifier);
+            setLoading(false);
 
-    if (!result.success) {
-      setError(result.message || 'SNA login failed');
-    }
+            if (!result.success) {
+              setError(result.message || 'SNA login failed');
+            }
+          }
+        }
+      ]
+    );
   };
 
   return (

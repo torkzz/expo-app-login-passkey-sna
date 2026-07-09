@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M360 Verify API - Passkey & SNA Testing Console</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --card-bg: rgba(30, 41, 59, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-gradient);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #a5b4fc, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 1.25rem;
+            backdrop-filter: blur(16px);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), #ec4899);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 0.75rem;
+            padding: 0.85rem 1rem;
+            color: var(--text-light);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 150px;
+            background: var(--primary);
+            color: var(--text-light);
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.85rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .console-container {
+            margin-top: 1.5rem;
+        }
+
+        .console-header {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .console {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #38bdf8;
+            max-height: 250px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+            padding: 0.25rem 0.6rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1><i class="fa-solid fa-gauge-high"></i> Verification Hub</h1>
+        <p>Dynamic Playpen for Testing Passkey & SNA Gateway Flows</p>
+    </header>
+
+    <!-- Global Client Credentials Card -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-title"><i class="fa-solid fa-key"></i> Gateway Credentials & Authentication</div>
+        <div class="input-row">
+            <div class="input-group">
+                <label for="appkey">Client ID (App Key)</label>
+                <input type="text" id="appkey" value="JH474A23J5eJLDOr">
+            </div>
+            <div class="input-group">
+                <label for="appsecret">Client Secret</label>
+                <input type="password" id="appsecret" value="2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO">
+            </div>
+        </div>
+        <div class="btn-list">
+            <button class="btn" id="generateTokenBtn"><i class="fa-solid fa-right-to-bracket"></i> Generate Access Token</button>
+        </div>
+        <div class="console-container">
+            <div class="console-header">
+                <span>AUTHENTICATION LOG</span>
+                <span class="badge" id="tokenBadge">NO TOKEN</span>
+            </div>
+            <div class="console" id="GenerateTokenOutput">Run "Generate Access Token" to begin...</div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Passkey Card -->
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-fingerprint"></i> Passkey Operations</div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="user_id">User ID</label>
+                    <input type="text" id="user_id" value="380584">
+                </div>
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" value="drcabral@m360.com.ph">
+                </div>
+            </div>
+            <div class="input-row" style="margin-top: 0.5rem;">
+                <div class="input-group">
+                    <label for="pin">PIN Code (Generated)</label>
+                    <input type="text" id="pin" readonly placeholder="N/A">
+                </div>
+                <div class="input-group">
+                    <label for="refcode">Ref Code (Generated)</label>
+                    <input type="text" id="refcode" readonly placeholder="N/A">
+                </div>
+            </div>
+            
+            <div class="btn-list">
+                <button class="btn" id="generateKeyBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> 1. Gen Key</button>
+                <button class="btn btn-success" id="registerPasskeyBtn"><i class="fa-solid fa-user-plus"></i> 2. Register</button>
+            </div>
+            <div class="btn-list" style="margin-top: 1rem;">
+                <button class="btn btn-warning" id="loginRequestBtn"><i class="fa-solid fa-paper-plane"></i> 3. Log Request</button>
+                <button class="btn btn-success" id="loginPasskeyBtn"><i class="fa-solid fa-unlock-keyhole"></i> 4. Verify Log</button>
+            </div>
+
+            <div class="console-container">
+                <div class="console-header">KEY GENERATION RESULTS</div>
+                <div class="console" id="GenerateKeyOutput">Generate options to proceed...</div>
+            </div>
+
+            <div class="console-container">
+                <div class="console-header">REGISTRATION / LOGIN OUTPUT</div>
+                <div class="console" id="output">Run registration or login assertions...</div>
+            </div>
+
+            <div class="console-container" style="display:none;">
+                <div class="console" id="loginRequestOutput"></div>
+                <div class="console" id="loginOutput"></div>
+            </div>
+        </div>
+
+        <!-- SNA Card -->
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-tower-cell"></i> Silent Network Auth (SNA)</div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="to">Recipient (Mobile Number)</label>
+                    <input type="text" id="to" value="+639178032215">
+                </div>
+                <div class="input-group">
+                    <label for="from">Sender ID</label>
+                    <input type="text" id="from" value="M360">
+                </div>
+            </div>
+            <div class="btn-list">
+                <button class="btn" id="authRequestBtn"><i class="fa-solid fa-share-nodes"></i> 1. Request Auth URL</button>
+                <button class="btn btn-success" id="verifyBtn"><i class="fa-solid fa-route"></i> 2. Run Cellular GET</button>
+            </div>
+
+            <div class="console-container">
+                <div class="console-header">SNA ROUTING OUTPUT</div>
+                <div class="console" id="AuthRequestOutput">Request authentication URL to begin routing...</div>
+            </div>
+
+            <div class="console-container">
+                <div class="console-header">VERIFICATION RESPONSE</div>
+                <div class="console" id="verifyOutput">Perform cellular check validation...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    const gatewayBaseUrl = "https://stg-verify.m360.com.ph/v1";
+
+    const authTokenUrl = gatewayBaseUrl + "/auth/token";
+    const generateKeyUrl = gatewayBaseUrl + "/passkey/api/generate/key";
+    const registerPasskeyUrl = gatewayBaseUrl + "/passkey/api/register/key";
+    const loginRequestUrl = gatewayBaseUrl + "/passkey/api/login";
+    const loginVerifyUrl = gatewayBaseUrl + "/passkey/api/login/verify";
+
+    // SNA
+    const snaRequestUrl = gatewayBaseUrl + "/sna/auth/request";
+    const snaVerifyUrl = gatewayBaseUrl + "/sna/pin/verify";
+
+    var verifyUrl = "";
+    var tokenData = null;
+    var generateKeyData = null;
+    var loginRequestResponse = null;
+
+    function recursiveBase64StrToArrayBuffer(obj) {
+        let prefix = '=?BINARY?B?';
+        let suffix = '?=';
+        if (typeof obj === 'object') {
+            for (let key in obj) {
+                if (typeof obj[key] === 'string') {
+                    let str = obj[key];
+                    if (str.substring(0, prefix.length) === prefix 
+                    && str.substring(str.length - suffix.length) === suffix) {
+                        str = str.substring(prefix.length, str.length - suffix.length);
+                        let binary_string = window.atob(str);
+                        let len = binary_string.length;
+                        let bytes = new Uint8Array(len);
+                        for (let i = 0; i < len; i++) {
+                            bytes[i] = binary_string.charCodeAt(i);
+                        }
+                        obj[key] = bytes.buffer;
+                    }
+                } else {
+                    recursiveBase64StrToArrayBuffer(obj[key]);
+                }
+            }
+        }
+    }
+
+    function arrayBufferToBase64(buffer) {
+        let binary = '';
+        let bytes = new Uint8Array(buffer);
+        let len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+
+    async function getToken() {
+        try {
+            var appkey = $("#appkey").val();
+            var appsecret = $("#appsecret").val();
+
+            if (!appkey || !appsecret) {
+                return null;
+            }
+            
+            const response = await $.ajax({
+                url: authTokenUrl,
+                type: "POST",
+                dataType: "json",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": "Basic " + btoa(appkey + ":" + appsecret)
+                },
+                data: {
+                    grant_type: "client_credentials"
+                }
+            });
+            return response;
+        } catch (xhr) {
+            console.error("Error fetching token:", xhr);
+            return null;
+        }
+    }
+
+    async function generateKey(accessToken) {
+        var userId = $("#user_id").val();
+        var username = $("#username").val();
+    
+        if (!userId) {
+            userId = "380584";
+            $("#user_id").val(userId);
+        }
+        if (!username) {
+            username = "drcabral@m360.com.ph";
+            $("#username").val(username);
+        }
+        
+        const response = await $.ajax({
+            url: generateKeyUrl,
+            type: "POST",
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
+            },
+            data: JSON.stringify({
+                "userid": userId,
+                "username": username
+            })
+        });
+        return response;
+    }
+   
+    async function registerPasskey(attestationResponse, accessToken) {
+        const response = await $.ajax({
+            url: registerPasskeyUrl,
+            type: "POST",
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
+            },
+            data: JSON.stringify(attestationResponse)
+        });
+        return response;       
+    }
+   
+    async function loginPasskey(accessToken) {
+        const response = await $.ajax({
+            url: loginRequestUrl,
+            type: "POST",
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
+            },
+            data: JSON.stringify({
+                "pin_code": localStorage.getItem("pk_pin_code"),
+                "ref_code": localStorage.getItem("pk_ref_code")
+            })
+        });
+        return response;
+    }
+
+    async function verifyLoginPasskey(assertionResponse, accessToken) {
+        const response = await $.ajax({
+            url: loginVerifyUrl,
+            type: "POST",
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
+            },
+            data: JSON.stringify(assertionResponse)
+        });
+        return response;
+    }
+
+    // SNA request method
+    async function sendAuthRequest(to, from, AccessToken) {
+        const response = await $.ajax({
+            url: snaRequestUrl,
+            type: "POST",
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + AccessToken
+            },
+            data: JSON.stringify({
+                "to": to,
+                "from": from
+            })
+        });
+        return response;
+    }
+
+    // Proxy request handler using sna.php
+    async function checkUrlRequest(url) {
+        try {
+            const response = await $.ajax({
+                url: 'sna.php',
+                type: "POST",
+                data: {
+                    action: 'proxy_globe_call',
+                    target_url: url
+                },
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+            return response;
+        } catch (jqXHR) {
+            console.error("Status:", jqXHR.status);
+            return {
+                status: jqXHR.status,
+                statusText: jqXHR.statusText,
+                response: jqXHR.responseText
+            };
+        }
+    }
+
+    // Gateway verify call
+    async function sendVerifyRequest(pin, ref, AccessToken) {
+        const response = await $.ajax({
+            url: snaVerifyUrl,
+            type: "POST",
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + AccessToken
+            },
+            data: JSON.stringify({
+                "pin_code": pin,
+                "ref_code": ref
+            })
+        });
+        return response;
+    }
+
+    $("#generateTokenBtn").click(async function () {
+        tokenData = await getToken();
+        if (!tokenData) {
+            console.error("Failed to obtain token.");
+            $("#GenerateTokenOutput").text("Error: Failed to obtain token.");
+            return;
+        }
+        $("#tokenBadge").text("AUTHORIZED").css("color", "var(--success)");
+        $("#GenerateTokenOutput").html(
+            "<b>GENERATE TOKEN SUCCESS</b><br><pre>" +
+            JSON.stringify(tokenData, null, 4) +
+            "</pre>"
+        );
+    });
+
+    $("#generateKeyBtn").click(async function () {
+        if (!tokenData) { alert("Please fetch token first."); return; }
+        generateKeyData = await generateKey(tokenData.access_token);
+        console.log("Key generation response:", generateKeyData);
+
+        $("#pin").val(generateKeyData.pin_code);
+        $("#refcode").val(generateKeyData.ref_code);
+
+        $("#GenerateKeyOutput").html(
+            "<b>GENERATE KEY SUCCESS</b><br><pre>" +
+            JSON.stringify(generateKeyData, null, 4) +
+            "</pre>"
+        );
+    });
+
+    $("#registerPasskeyBtn").click(async function () {
+        if (!tokenData) { alert("Please fetch token first."); return; }
+        if (!generateKeyData) { alert("Please run Key Generation first."); return; }
+
+        const createArgs = generateKeyData;
+        if (createArgs.success === false) {
+     		throw new Error(createArgs.message || 'getCreateArgs: unknown error occured');
+     	}
+
+        recursiveBase64StrToArrayBuffer(createArgs.key);
+
+        const cred = await navigator.credentials.create(createArgs.key);
+
+        localStorage.setItem("pk_pin_code", createArgs.pin_code);
+        localStorage.setItem("pk_ref_code", createArgs.ref_code);
+
+        const attestationResponse = {
+            pin_code: createArgs.pin_code,
+            ref_code: createArgs.ref_code,
+            credentialId: cred.rawId ? arrayBufferToBase64(cred.rawId) : null,
+            transport: cred.response.getTransports ? cred.response.getTransports() : null,
+            clientDataJSON: cred.response.clientDataJSON ? arrayBufferToBase64(cred.response.clientDataJSON) : null,
+            attestationObject: cred.response.attestationObject ? arrayBufferToBase64(cred.response.attestationObject) : null
+        };
+
+        const registerResponse = await registerPasskey(attestationResponse, tokenData.access_token);
+        $("#output").html(
+            "<b>REGISTERED SUCCESS</b><br><pre>" +
+            JSON.stringify({
+                attestationResponse,
+                registerResponse
+            }, null, 4) +
+            "</pre>"
+        );
+    });
+
+    $("#loginRequestBtn").click(async function () {
+        if (!tokenData) { alert("Please fetch token first."); return; }
+        loginRequestResponse = await loginPasskey(tokenData.access_token);
+        $("#output").html(
+            "<b>LOGIN REQUEST SENT</b><br><pre>" +
+            JSON.stringify(loginRequestResponse, null, 4) +
+            "</pre>"
+        );
+    });
+
+    $("#loginPasskeyBtn").click(async function () {
+        if (!tokenData) { alert("Please fetch token first."); return; }
+        if (!loginRequestResponse) { alert("Please run Login Request first."); return; }
+        
+        const createArgs = loginRequestResponse;
+        if (createArgs.success === false) {
+     		throw new Error(createArgs.message || 'getCreateArgs: unknown error occured');
+     	}
+
+        recursiveBase64StrToArrayBuffer(createArgs.key);
+
+        const cred = await navigator.credentials.get(createArgs.key);
+
+        const assertionResponse = {
+            pin_code: localStorage.getItem("pk_pin_code"),
+            ref_code: localStorage.getItem("pk_ref_code"),
+            credentialId: cred.rawId ? arrayBufferToBase64(cred.rawId) : null,
+            clientDataJSON: cred.response.clientDataJSON ? arrayBufferToBase64(cred.response.clientDataJSON) : null,
+            authenticatorData: cred.response.authenticatorData ? arrayBufferToBase64(cred.response.authenticatorData) : null,
+            signature: cred.response.signature ? arrayBufferToBase64(cred.response.signature) : null,
+            userHandle: cred.response.userHandle ? arrayBufferToBase64(cred.response.userHandle) : null
+        };
+
+        const verifyResponse = await verifyLoginPasskey(assertionResponse, tokenData.access_token);
+        $("#output").html(
+            "<b>LOGIN SUCCESS</b><br><pre>" +
+            JSON.stringify({
+                assertionResponse,
+                verifyResponse
+            }, null, 4) +
+            "</pre>"
+        );
+    });   
+
+    // SNA triggers
+    $("#authRequestBtn").click(async function () {
+        if (!tokenData) { alert("Please fetch token first."); return; }
+        var to = $("#to").val();
+        var from = $("#from").val();
+       
+        if (!to || !from) {
+            alert("Please provide both 'To' and 'From' values.");
+            return;
+        }
+        const authResponse = await sendAuthRequest(to, from, tokenData.access_token);
+        verifyUrl = authResponse.check_url; 
+        
+        $("#AuthRequestOutput").html(
+            "<b>AUTH REQUEST SENT</b><br><pre>" +
+            JSON.stringify(authResponse, null, 4) +
+            "</pre>"
+        );
+    });
+
+    $("#verifyBtn").click(async function () {
+        if (!tokenData) { alert("Please fetch token first."); return; }
+        if (!verifyUrl) { alert("Please trigger step 1 Auth Request first."); return; }
+
+        $("#verifyOutput").html("Routing request over simulated proxy...");
+        const verifyResponse = await checkUrlRequest(verifyUrl);
+
+        $("#verifyOutput").html(
+            "<b>CELLULAR CHECK COMPLETED</b><br><pre>" +
+            JSON.stringify(verifyResponse, null, 4) +
+            "</pre>"
+        );
+
+        // If check returns code values, run validation automatically
+        const pin = verifyResponse.pin_code;
+        const ref = verifyResponse.ref_code;
+        if (pin && ref) {
+            $("#verifyOutput").append("<br><b>VALIDATING CREDENTIALS ON GATEWAY...</b>");
+            const finalVerify = await sendVerifyRequest(pin, ref, tokenData.access_token);
+            $("#verifyOutput").append("<br><pre>" + JSON.stringify(finalVerify, null, 4) + "</pre>");
+        }
+    });
+});
+</script>
+</body>
+</html>

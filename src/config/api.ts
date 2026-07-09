@@ -16,8 +16,8 @@ export const API = {
     LOGIN_VERIFY: 'passkey/login/verify',
   },
   SNA: {
-    LOGIN_REQUEST: 'sna/api/login/request',
-    LOGIN_VERIFY: 'sna/api/login/verify',
+    LOGIN_REQUEST: 'sna/auth/request',
+    LOGIN_VERIFY: 'sna/pin/verify',
   },
 } as const;
 

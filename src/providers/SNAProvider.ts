@@ -2,6 +2,7 @@ import { AuthenticationProvider } from './AuthenticationProvider';
 import { SNAService } from '../services/SNAService';
 import { AuthResult, AuthenticationMethod, User } from '../types/auth';
 import { logger } from '../utils/logger';
+import { Platform } from 'react-native';
 
 /**
  * SNAProvider
@@ -31,25 +32,80 @@ export class SNAProvider implements AuthenticationProvider {
         };
       }
 
-      // TODO: Implement UI/Native logic to trigger the challengeUrl
-      // (usually by opening the URL in a hidden web view or performing a network request on cellular data)
-      logger.info('SNA Challenge URL received', { url: requestResult.challengeUrl });
+      logger.info('SNA Challenge URL received, normalizing and triggering native cellular request', { url: requestResult.challengeUrl });
 
-      // 2. Verification
-      // In a real flow, we would wait for the challenge to be completed before verifying.
-      const verifyResult = await this.snaService.verifyLogin(requestResult.referenceId || '');
+      if (Platform.OS === 'android') {
+        try {
+          const { triggerCellularGet } = require('../../modules/cellular-request');
+          
+          let targetUrl = requestResult.challengeUrl || '';
+          if (targetUrl.includes('sna/api/auth/check/')) {
+            targetUrl = targetUrl.replace('sna/api/auth/check/', 'verify/v1/sna/auth/check/');
+          }
+          
+          logger.info('Routing challenge URL via cellular GET request', { targetUrl });
+          const cellularResult = await triggerCellularGet(targetUrl);
+          logger.info('Cellular network request completed', { status: cellularResult.status });
 
-      const mockUser: User = {
-        id: params.phoneNumber,
-        mobileNumber: params.phoneNumber,
-      };
+          if (cellularResult.status >= 200 && cellularResult.status < 300) {
+            let pinCode = '';
+            let refCode = '';
+            try {
+              const parsedBody = JSON.parse(cellularResult.body);
+              pinCode = parsedBody.pin_code;
+              refCode = parsedBody.ref_code;
+            } catch (jsonErr) {
+              logger.error('Failed to parse cellular response body as JSON', jsonErr);
+              throw new Error('SNA verification payload is invalid or unreadable.');
+            }
 
-      return {
-        success: verifyResult.success,
-        method: this.getType(),
-        user: verifyResult.success ? mockUser : undefined,
-        message: verifyResult.message,
-      };
+            if (!pinCode || !refCode) {
+              throw new Error('Cellular response did not contain verification parameters.');
+            }
+
+            // 2. Verification using extracted pin and ref
+            const verifyResult = await this.snaService.verifyLogin({ pinCode, refCode });
+
+            const mockUser: User = {
+              id: params.phoneNumber,
+              mobileNumber: params.phoneNumber,
+            };
+
+            return {
+              success: verifyResult.success,
+              method: this.getType(),
+              user: verifyResult.success ? mockUser : undefined,
+              message: verifyResult.message,
+            };
+          } else {
+            throw new Error(`Carrier check failed with HTTP status ${cellularResult.status}`);
+          }
+        } catch (e) {
+          logger.error('Failed to route SNA challenge via native cellular module', e);
+          return {
+            success: false,
+            method: this.getType(),
+            message: e instanceof Error ? e.message : 'Cellular carrier routing failed',
+          };
+        }
+      } else {
+        // Fallback for non-Android environments (simulators / iOS demo)
+        logger.warn('SNA cellular request skipped (non-Android platform)');
+        
+        // Mock fallback verification
+        const verifyResult = await this.snaService.verifyLogin({ pinCode: 'mock', refCode: 'mock' });
+        const mockUser: User = {
+          id: params.phoneNumber,
+          mobileNumber: params.phoneNumber,
+        };
+
+        return {
+          success: verifyResult.success,
+          method: this.getType(),
+          user: verifyResult.success ? mockUser : undefined,
+          message: verifyResult.message,
+        };
+      }
     } catch (error) {
       logger.error('SNA login failed', error);
       return {

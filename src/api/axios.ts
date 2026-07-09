@@ -62,10 +62,13 @@ class ApiClient {
 
         config.headers['X-Request-ID'] = requestId;
 
-        // Inject Authorization header
-        const accessToken = tokenManager.getAccessToken();
-        if (accessToken) {
-          config.headers['Authorization'] = `Bearer ${accessToken}`;
+        // Inject Authorization header only if caller hasn't set one already
+        // (e.g. the auth/token endpoint sets its own Basic auth header)
+        if (!config.headers['Authorization']) {
+          const accessToken = tokenManager.getAccessToken();
+          if (accessToken) {
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
+          }
         }
 
         // Log request

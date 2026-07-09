@@ -121,5 +121,6 @@ export interface LoginVerifyRequest {
 export interface LoginVerifyResponse {
   success: boolean;
   token?: string;
+  userid?: string;
   message?: string;
 }

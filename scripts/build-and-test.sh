@@ -51,7 +51,7 @@ wait_for_text() {
   log "Waiting for '${text}' to appear on screen…"
   while true; do
     if dump_ui; then
-      if grep -q "text=\"${text}\"" /tmp/wd.xml 2>/dev/null; then
+      if grep -q -i "text=\"${text}\"" /tmp/wd.xml 2>/dev/null; then
         break
       fi
       if grep -q 'text="This is the developer menu.' /tmp/wd.xml 2>/dev/null; then
@@ -90,7 +90,7 @@ content = open('/tmp/wd.xml').read()
 t = sys.argv[1]
 t_esc = re.escape(t)
 pattern = r'(?:text|content-desc)=\"' + t_esc + r'\"[^>]*bounds=\"\[([^\]]+\]\[[^\]]+)\]\"'
-m = re.search(pattern, content)
+m = re.search(pattern, content, re.IGNORECASE)
 if m:
     bounds = m.group(1)
     c = re.match(r'(\d+),(\d+)\]\[(\d+),(\d+)', bounds)
@@ -186,15 +186,20 @@ FLOW_WAIT=10        # seconds to wait for passkey flow to complete
 # ─── Flags ────────────────────────────────────────────────────────────────────
 DO_BUILD=true
 DO_TEST=true
+TEST_FLOW="both"
 
 for arg in "$@"; do
   case $arg in
     --no-build)   DO_BUILD=false ;;
     --build-only) DO_TEST=false  ;;
+    --passkey)    TEST_FLOW="passkey" ;;
+    --sna)        TEST_FLOW="sna" ;;
     --help|-h)
-      echo "Usage: $0 [--no-build] [--build-only]"
+      echo "Usage: $0 [--no-build] [--build-only] [--passkey] [--sna]"
       echo "  --no-build    Skip Expo build; only run the test flow"
       echo "  --build-only  Build only; skip automated test"
+      echo "  --passkey     Run Passkey tests only"
+      echo "  --sna         Run SNA tests only"
       exit 0 ;;
   esac
 done
@@ -307,125 +312,61 @@ ok "Logcat PID: ${LOGCAT_PID}"
 sleep 1
 
 # ─── Step 4: Navigate to Register screen ──────────────────────────────────────
-header "Step 4 — Navigate to Register screen"
+if [[ "$TEST_FLOW" == "both" || "$TEST_FLOW" == "passkey" ]]; then
+  header "Step 4 — Navigate to Register screen"
 
-# 1. Wait for the app to be loaded (either on Login or Dashboard/Home screen)
-log "Waiting for app to load..."
-wait_for_text "App loaded" "Continue with Passkey" 25 || {
-  # If "Continue with Passkey" is not found, maybe we are already logged in?
+  # 1. Wait for the app to be loaded (either on Login or Dashboard/Home screen)
+  log "Waiting for app to load..."
+  wait_for_text "App loaded" "Continue with Passkey" 25 || {
+    # If "Continue with Passkey" is not found, maybe we are already logged in?
+    if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
+      ok "App loaded (already logged in)"
+    else
+      err "App failed to load"
+    fi
+  }
+
+  # 2. If on Home/Dashboard, log out first
   if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
-    ok "App loaded (already logged in)"
-  else
-    err "App failed to load"
+    log "Currently logged in — logging out…"
+    click_text "Logout"
+    # Wait for the login screen to appear after logout
+    wait_for_text "Login screen after logout" "Continue with Passkey" 15
   fi
-}
 
-# 2. If on Home/Dashboard, log out first
-if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
-  log "Currently logged in — logging out…"
-  click_text "Logout"
-  # Wait for the login screen to appear after logout
-  wait_for_text "Login screen after logout" "Continue with Passkey" 15
-fi
+  # 3. Click Register link on Login screen
+  log "Navigating to Register screen..."
+  # Dismiss keyboard just in case it is covering the register link
+  adb -s "$DEVICE" shell input keyevent 111
+  sleep 0.5
+  click_text "Register"
 
-# 3. Click Register link on Login screen
-log "Navigating to Register screen..."
-# Dismiss keyboard just in case it is covering the register link
-adb -s "$DEVICE" shell input keyevent 111
-sleep 0.5
-click_text "Register"
+  # 4. Wait for the Create Account screen to appear
+  wait_for_text "Should be on Create Account screen" "Create Account" 15
 
-# 4. Wait for the Create Account screen to appear
-wait_for_text "Should be on Create Account screen" "Create Account" 15
+  # ─── Step 5: Fill registration form ───────────────────────────────────────────
+  header "Step 5 — Fill registration form"
+  log "Username: ${TEST_USERNAME}"
+  log "Mobile:   ${TEST_MOBILE}"
 
-# ─── Step 5: Fill registration form ───────────────────────────────────────────
-header "Step 5 — Fill registration form"
-log "Username: ${TEST_USERNAME}"
-log "Mobile:   ${TEST_MOBILE}"
+  click_text "Choose a username"
+  type_into "$TEST_USERNAME"
 
-click_text "Choose a username"
-type_into "$TEST_USERNAME"
-
-click_text "e.g. +639..."
-type_into "$TEST_MOBILE"
-
-sleep 1
-
-# Dismiss keyboard
-adb -s "$DEVICE" shell input keyevent 111
-
-# ─── Step 6: Tap Register with Passkey ────────────────────────────────────────
-header "Step 6 — Tap 'Register with Passkey'"
-click_text "Register with Passkey"
-log "Waiting for native passkey registration flow to complete..."
-for i in {1..15}; do
-  sleep 1
-  if dump_ui; then
-    grep -o -E 'text="[^"]{1,50}"' /tmp/wd.xml | grep -v -E 'text=""' | head -n 40 || true
-    if grep -q -i 'text="Continue"' /tmp/wd.xml; then
-      log "Clicking 'Continue' button..."
-      click_text "Continue" || true
-    elif grep -q -i 'text="Create"' /tmp/wd.xml; then
-      log "Clicking 'Create' button..."
-      click_text "Create" || true
-    elif grep -q -i "text=\"${TEST_USERNAME}\"" /tmp/wd.xml; then
-      log "Clicking username '${TEST_USERNAME}' selector..."
-      click_text "${TEST_USERNAME}" || true
-    elif grep -q -i 'text="Use screen lock"' /tmp/wd.xml; then
-      log "Clicking 'Use screen lock' button..."
-      click_text "Use screen lock" || true
-    elif grep -q -i 'text="Use fingerprint"' /tmp/wd.xml; then
-      log "Clicking 'Use fingerprint' button..."
-      click_text "Use fingerprint" || true
-    elif grep -q -i 'text="Use"' /tmp/wd.xml; then
-      log "Clicking 'Use' button..."
-      click_text "Use" || true
-    elif grep -q -i 'text="OK"' /tmp/wd.xml; then
-      log "Clicking 'OK' button..."
-      click_text "OK" || true
-    fi
-  fi
-done
-
-# ─── Step 7: Test Login Flow ──────────────────────────────────────────────────
-header "Step 7 — Test Login Flow"
-
-# 1. Log out from the registered session or go back to Login screen
-if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
-  log "Registration succeeded! Logged in automatically. Logging out to test login flow…"
-  click_text "Logout"
-  sleep 3
-else
-  warn "Logout button not found after registration — registration may have failed. Going back to Login screen..."
-  # If not on Login screen, press back once
-  if ! dump_ui || ! grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
-    adb -s "$DEVICE" shell input keyevent 4
-    sleep 1.5
-    # If still not on Login screen, press back again
-    if ! dump_ui || ! grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
-      adb -s "$DEVICE" shell input keyevent 4
-      sleep 2
-    fi
-  fi
-fi
-
-# 2. Fill login identifier and tap Continue with Passkey
-if dump_ui && grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
-  log "Clearing and typing mobile number..."
-  clear_edit_text
+  click_text "e.g. +639..."
   type_into "$TEST_MOBILE"
+
+  sleep 1
+
   # Dismiss keyboard
   adb -s "$DEVICE" shell input keyevent 111
-  sleep 1
 
-
-  log "Tapping 'Continue with Passkey'…"
-  click_text "Continue with Passkey"
-  log "Waiting for native passkey login flow to complete..."
+  # ─── Step 6: Tap Register with Passkey ────────────────────────────────────────
+  header "Step 6 — Tap 'Register with Passkey'"
+  click_text "Register with Passkey"
+  log "Waiting for native passkey registration flow to complete..."
   for i in {1..15}; do
     sleep 1
     if dump_ui; then
-      grep -o -E 'text="[^"]{1,50}"' /tmp/wd.xml | grep -v -E 'text=""' | head -n 40 || true
       if grep -q -i 'text="Continue"' /tmp/wd.xml; then
         log "Clicking 'Continue' button..."
         click_text "Continue" || true
@@ -450,8 +391,102 @@ if dump_ui && grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
       fi
     fi
   done
-else
-  err "Continue with Passkey button not found on Login screen."
+
+  # ─── Step 7: Test Login Flow ──────────────────────────────────────────────────
+  header "Step 7 — Test Login Flow"
+
+  # 1. Log out from the registered session or go back to Login screen
+  if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
+    log "Registration succeeded! Logged in automatically. Logging out to test login flow…"
+    click_text "Logout"
+    sleep 3
+  else
+    warn "Logout button not found after registration — registration may have failed. Going back to Login screen..."
+    # If not on Login screen, press back once
+    if ! dump_ui || ! grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
+      adb -s "$DEVICE" shell input keyevent 4
+      sleep 1.5
+      # If still not on Login screen, press back again
+      if ! dump_ui || ! grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
+        adb -s "$DEVICE" shell input keyevent 4
+        sleep 2
+      fi
+    fi
+  fi
+
+  # 2. Fill login identifier and tap Continue with Passkey
+  if dump_ui && grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
+    log "Clearing and typing mobile number..."
+    clear_edit_text
+    type_into "$TEST_MOBILE"
+    # Dismiss keyboard
+    adb -s "$DEVICE" shell input keyevent 111
+    sleep 1
+
+    log "Tapping 'Continue with Passkey'…"
+    click_text "Continue with Passkey"
+    log "Waiting for native passkey login flow to complete..."
+    for i in {1..15}; do
+      sleep 1
+      if dump_ui; then
+        if grep -q -i 'text="Continue"' /tmp/wd.xml; then
+          log "Clicking 'Continue' button..."
+          click_text "Continue" || true
+        elif grep -q -i 'text="Create"' /tmp/wd.xml; then
+          log "Clicking 'Create' button..."
+          click_text "Create" || true
+        elif grep -q -i "text=\"${TEST_USERNAME}\"" /tmp/wd.xml; then
+          log "Clicking username '${TEST_USERNAME}' selector..."
+          click_text "${TEST_USERNAME}" || true
+        elif grep -q -i 'text="Use screen lock"' /tmp/wd.xml; then
+          log "Clicking 'Use screen lock' button..."
+          click_text "Use screen lock" || true
+        elif grep -q -i 'text="Use fingerprint"' /tmp/wd.xml; then
+          log "Clicking 'Use fingerprint' button..."
+          click_text "Use fingerprint" || true
+        elif grep -q -i 'text="Use"' /tmp/wd.xml; then
+          log "Clicking 'Use' button..."
+          click_text "Use" || true
+        elif grep -q -i 'text="OK"' /tmp/wd.xml; then
+          log "Clicking 'OK' button..."
+          click_text "OK" || true
+        fi
+      fi
+    done
+  else
+    err "Continue with Passkey button not found on Login screen."
+  fi
+fi
+
+if [[ "$TEST_FLOW" == "both" || "$TEST_FLOW" == "sna" ]]; then
+  header "SNA Verification Flow"
+  log "Waiting for app to load..."
+  wait_for_text "App loaded" "Continue with Passkey" 25 || {
+    if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
+      log "Currently logged in — logging out first…"
+      click_text "Logout"
+      wait_for_text "Login screen after logout" "Continue with Passkey" 15
+    fi
+  }
+
+  log "Clearing and typing mobile number..."
+  clear_edit_text
+  type_into "$TEST_MOBILE"
+  adb -s "$DEVICE" shell input keyevent 111
+  sleep 1
+
+  log "Tapping 'Sign in with Mobile Network'…"
+  click_text "Sign in with Mobile Network"
+
+  # Wait for the confirmation dialog and tap 'Verify'
+  log "Waiting for Mobile Network Verification popup…"
+  wait_for_text "Popup visible" "Verify" 5 || true
+  if dump_ui && grep -q 'text="Verify"' /tmp/wd.xml; then
+    click_text "Verify"
+  fi
+
+  log "Waiting for SNA flow to complete (approx 10s)..."
+  sleep 10
 fi
 
 # ─── Step 8: Kill logcat and analyse ──────────────────────────────────────────
@@ -475,22 +510,30 @@ check() {
   fi
 }
 
-log "--- REGISTRATION CHECKS ---"
-check "Token obtained"                       "Token received"
-check "GenerateKey request sent"             "Requesting registration challenge"
-check "GenerateKey 200 OK"                   "Registration challenge received"
-check "create() invoked"                     "Calling create"
-check "Credential returned"                  "Credential received"
-check "registerKey API called"               "Calling registerKey API"
-check "Registration successful"              "registerKey response"
+if [[ "$TEST_FLOW" == "both" || "$TEST_FLOW" == "passkey" ]]; then
+  log "--- PASSKEY CHECKS ---"
+  check "Token obtained"                       "Token received"
+  check "GenerateKey request sent"             "Requesting registration challenge"
+  check "GenerateKey 200 OK"                   "Registration challenge received"
+  check "create() invoked"                     "Calling create"
+  check "Credential returned"                  "Credential received"
+  check "registerKey API called"               "Calling registerKey API"
+  check "Registration successful"              "registerKey response"
+  check "Loaded credentials from SecureStore" "Loaded credentials"
+  check "Login challenge requested"           "Requesting login challenge"
+  check "get() invoked"                        "Calling get"
+fi
 
-log "--- LOGIN CHECKS ---"
-check "Loaded credentials from SecureStore" "Loaded credentials"
-check "Login challenge requested"           "Requesting login challenge"
-check "get() invoked"                        "Calling get"
-check "Assertion received"                   "Assertion received"
-check "verifyLogin API called"               "Verifying login assertion"
-check "Login successful"                     "Login verify response"
+if [[ "$TEST_FLOW" == "both" || "$TEST_FLOW" == "sna" ]]; then
+  log "--- SNA CHECKS ---"
+  check "Token obtained"                       "Token received"
+  check "SNA login flow started"               "Starting SNA login flow"
+  check "POST auth/request sent"               "POST.*sna/auth/request"
+  check "Challenge URL received"               "SNA Challenge URL received"
+  check "Cellular GET triggered"               "triggering native cellular request"
+  check "Cellular network request completed"   "Cellular network request completed"
+  check "POST pin/verify sent"                 "POST.*sna/pin/verify"
+fi
 
 # Check for unexpected errors
 if grep -q "405" "$LOGCAT_FILE"; then

@@ -26,13 +26,16 @@ export class SNAService {
    * Initiate an SNA login request.
    */
   public async requestLogin(phoneNumber: string): Promise<SNAResult> {
-    const request: SNALoginRequest = { phoneNumber };
+    const request: SNALoginRequest = {
+      to: phoneNumber,
+      from: 'M360', // Default registered sender ID
+    };
     const response = await SNAApi.loginRequest(request);
 
     return {
-      success: response.success,
-      challengeUrl: response.checkUrl,
-      referenceId: response.referenceId,
+      success: response.success || response.code === 2001,
+      challengeUrl: response.check_url,
+      referenceId: response.transid,
       message: response.message,
       raw: response,
     };
@@ -41,13 +44,16 @@ export class SNAService {
   /**
    * Verify the status of an SNA authentication.
    */
-  public async verifyLogin(referenceId: string): Promise<SNAResult> {
-    const request: SNAVerifyRequest = { referenceId };
+  public async verifyLogin(params: { pinCode: string; refCode: string }): Promise<SNAResult> {
+    const request: SNAVerifyRequest = {
+      pin_code: params.pinCode,
+      ref_code: params.refCode,
+    };
     const response = await SNAApi.loginVerify(request);
 
     return {
-      success: response.success && response.status === 'COMPLETED',
-      referenceId,
+      // code 2011 is PIN_VERIFIED
+      success: response.success || response.code === 2011 || response.status === 'pin_verified',
       status: response.status,
       message: response.message,
       raw: response,
