@@ -69,13 +69,21 @@ class ApiClient {
         }
 
         // Log request (Sensitive data exclusion handled by logging policy)
-        if (ENV.ENABLE_NETWORK_LOGGING) {
-          console.log(`Request: ${config.method?.toUpperCase()} ${config.url}`, {
-            requestId,
-            params: config.params,
-            // Never log headers or data here to avoid sensitive info leaks
-          });
-        }
+      if (ENV.ENABLE_NETWORK_LOGGING) {
+        const fullUrl = new URL(
+          config.url ?? '',
+          config.baseURL ?? ''
+        ).toString();
+
+        console.log('======================================');
+        console.log('[HTTP REQUEST]');
+        console.log(`${config.method?.toUpperCase()} ${fullUrl}`);
+        console.log('Base URL:', config.baseURL);
+        console.log('Path:', config.url);
+        console.log('Request ID:', requestId);
+        console.log('Params:', config.params);
+        console.log('======================================');
+      }
 
         return config;
       },
@@ -94,11 +102,18 @@ class ApiClient {
         response.duration = duration;
 
         if (ENV.ENABLE_NETWORK_LOGGING) {
-          console.log(`Response: ${response.config.method?.toUpperCase()} ${response.config.url}`, {
-            status: response.status,
-            duration: `${duration}ms`,
-            requestId,
-          });
+          const fullUrl = new URL(
+            response.config.url ?? '',
+            response.config.baseURL ?? ''
+          ).toString();
+
+          console.log('======================================');
+          console.log('[HTTP RESPONSE]');
+          console.log(`${response.config.method?.toUpperCase()} ${fullUrl}`);
+          console.log('Status:', response.status);
+          console.log('Duration:', `${duration}ms`);
+          console.log('Request ID:', requestId);
+          console.log('======================================');
         }
 
         return response;

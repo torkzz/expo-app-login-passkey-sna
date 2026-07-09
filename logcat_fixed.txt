@@ -667,3 +667,751 @@
 07-08 02:04:40.777 14239 14299 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
 07-08 02:04:40.790 14239 14299 I ReactNativeJS: [Splash] Initialization complete. Authenticated: true
 07-08 02:04:40.790 14239 14299 I ReactNativeJS: [Splash] Navigating to Dashboard
+07-08 02:05:46.061 14239 14299 I ReactNativeJS: [Splash] Started
+07-08 02:05:46.072 14239 14299 I ReactNativeJS: Passkey provider logout
+07-08 02:05:47.594 14239 14299 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:05:47.606 14239 14299 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-08 02:05:47.606 14239 14299 I ReactNativeJS: [Splash] Navigating to Login
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: Cannot connect to Metro.
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: 
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: Try the following to fix the issue:
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: - Ensure that Metro is running and available on the same network
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: - Ensure that your device/emulator is connected to your machine and has USB debugging enabled - run 'adb devices' to see a list of connected devices
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: - If you're on a physical device connected to the same machine, run 'adb reverse tcp:8081 tcp:8081' to forward requests from your device
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: - If your device is on the same Wi-Fi network, set 'Debug server host & port for device' in 'Dev settings' to your machine's IP address and the port of the local dev server - e.g. 10.0.1.1:8081
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: 
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: URL: 192.168.100.177:8081
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: 
+07-08 02:05:57.607 14239 14299 W ReactNativeJS: Error: undefined
+07-08 02:12:04.720 18022 18095 I ReactNativeJS: 'Passkey supported:', true
+07-08 02:12:05.463 18022 18095 I ReactNativeJS: Running "main" with {"rootTag":1,"initialProps":{},"fabric":true}
+07-08 02:12:05.597 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:12:07.130 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:12:07.620 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-08 02:12:07.620 18022 18095 I ReactNativeJS: [Splash] Navigating to Login
+07-08 02:12:22.848 18022 18095 I ReactNativeJS: [AUTH] STEP 1 - Starting login
+07-08 02:12:22.849 18022 18095 I ReactNativeJS: [AUTH] STEP 2 - Calling AuthApi.getToken()
+07-08 02:12:22.850 18022 18095 I ReactNativeJS: [TOKEN] START
+07-08 02:12:22.885 18022 18095 I ReactNativeJS: 'AUTH HEADER =', 'Basic Skg0NzRBMjNKNWVKTERPcjoyU2sxSDc4MDhOcGJZRGdHcjBLdFRSYWszcXMwZUdHTw=='
+07-08 02:12:22.885 18022 18095 I ReactNativeJS: 'BODY =', 'grant_type=client_credentials'
+07-08 02:12:22.886 18022 18095 I ReactNativeJS: 'URL =', '/auth/token'
+07-08 02:12:22.886 18022 18095 I ReactNativeJS: 'BASE URL =', 'https://dev.m360.com.ph/verify/v1'
+07-08 02:12:22.887 18022 18095 I ReactNativeJS: 'CLIENT ID =', 'JH474A23J5eJLDOr'
+07-08 02:12:22.887 18022 18095 I ReactNativeJS: 'CLIENT SECRET =', '2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO'
+07-08 02:12:25.373 18022 18095 I ReactNativeJS: [TOKEN] SUCCESS
+07-08 02:12:25.383 18022 18095 I ReactNativeJS: { code: 2000,
+07-08 02:12:25.383 18022 18095 I ReactNativeJS:   status: 'token_generated',
+07-08 02:12:25.383 18022 18095 I ReactNativeJS:   message: 'Auth token generated; short-lived token based on token_type.',
+07-08 02:12:25.383 18022 18095 I ReactNativeJS:   access_token: 'Nc2Y47ZEeGQMsN9y9YXM2VQTSmmnwQF9',
+07-08 02:12:25.383 18022 18095 I ReactNativeJS:   token_type: 'Bearer',
+07-08 02:12:25.383 18022 18095 I ReactNativeJS:   expires_in: 3600,
+07-08 02:12:25.383 18022 18095 I ReactNativeJS:   timestamp: 1783447945 }
+07-08 02:12:25.384 18022 18095 I ReactNativeJS: [AUTH] STEP 3 - Token received
+07-08 02:12:25.384 18022 18095 I ReactNativeJS: [AUTH] STEP 4 - Calling tokenManager.set()
+07-08 02:12:25.475 18022 18095 I ReactNativeJS: [AUTH] STEP 5 - tokenManager.set() completed
+07-08 02:12:25.475 18022 18095 I ReactNativeJS: [AUTH] STEP 6 - Updating Zustand
+07-08 02:12:25.475 18022 18095 I ReactNativeJS: [AUTH] STEP 7 - Login complete
+07-08 02:12:25.547 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:12:25.554 18022 18095 I ReactNativeJS: PasskeyProvider: Starting login flow
+07-08 02:12:25.555 18022 18095 I ReactNativeJS: '[LOGIN][STEP 0] Loaded credentials', { pinCode: '', refCode: '' }
+07-08 02:12:27.080 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:12:27.150 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: true
+07-08 02:12:27.169 18022 18095 I ReactNativeJS: [Splash] Navigating to Dashboard
+07-08 02:12:29.249 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:12:29.255 18022 18095 I ReactNativeJS: Passkey provider logout
+07-08 02:12:30.783 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:12:30.797 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-08 02:12:30.797 18022 18095 I ReactNativeJS: [Splash] Navigating to Login
+07-08 02:13:35.319 18022 18095 I ReactNativeJS: 'Passkey supported:', true
+07-08 02:13:44.708 18022 18095 I ReactNativeJS: 'Passkey supported:', true
+07-08 02:13:49.868 18022 18095 I ReactNativeJS: 'Passkey supported:', true
+07-08 02:14:37.007 18022 18095 I ReactNativeJS: '[SCREEN] Register clicked', { username: 'tester', mobileNumber: '+639178032215' }
+07-08 02:14:37.007 18022 18095 I ReactNativeJS: [SCREEN] Calling AuthenticationManager.registerWithPasskey()
+07-08 02:14:37.011 18022 18095 I ReactNativeJS: A
+07-08 02:14:37.012 18022 18095 I ReactNativeJS: B
+07-08 02:14:37.013 18022 18095 I ReactNativeJS: [AUTH] STEP 1 - Starting login
+07-08 02:14:37.014 18022 18095 I ReactNativeJS: [AUTH] STEP 2 - Calling AuthApi.getToken()
+07-08 02:14:37.014 18022 18095 I ReactNativeJS: [TOKEN] START
+07-08 02:14:37.048 18022 18095 I ReactNativeJS: 'AUTH HEADER =', 'Basic Skg0NzRBMjNKNWVKTERPcjoyU2sxSDc4MDhOcGJZRGdHcjBLdFRSYWszcXMwZUdHTw=='
+07-08 02:14:37.048 18022 18095 I ReactNativeJS: 'BODY =', 'grant_type=client_credentials'
+07-08 02:14:37.048 18022 18095 I ReactNativeJS: 'URL =', '/auth/token'
+07-08 02:14:37.048 18022 18095 I ReactNativeJS: 'BASE URL =', 'https://dev.m360.com.ph/verify/v1'
+07-08 02:14:37.048 18022 18095 I ReactNativeJS: 'CLIENT ID =', 'JH474A23J5eJLDOr'
+07-08 02:14:37.048 18022 18095 I ReactNativeJS: 'CLIENT SECRET =', '2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO'
+07-08 02:14:37.397 18022 18095 I ReactNativeJS: [TOKEN] SUCCESS
+07-08 02:14:37.397 18022 18095 I ReactNativeJS: { code: 2000,
+07-08 02:14:37.397 18022 18095 I ReactNativeJS:   status: 'token_generated',
+07-08 02:14:37.397 18022 18095 I ReactNativeJS:   message: 'Auth token generated; short-lived token based on token_type.',
+07-08 02:14:37.397 18022 18095 I ReactNativeJS:   access_token: 'LjT2pXiaSZdvgZFIFT237SUDE17vJVom',
+07-08 02:14:37.397 18022 18095 I ReactNativeJS:   token_type: 'Bearer',
+07-08 02:14:37.397 18022 18095 I ReactNativeJS:   expires_in: 3600,
+07-08 02:14:37.397 18022 18095 I ReactNativeJS:   timestamp: 1783448077 }
+07-08 02:14:37.397 18022 18095 I ReactNativeJS: [AUTH] STEP 3 - Token received
+07-08 02:14:37.397 18022 18095 I ReactNativeJS: [AUTH] STEP 4 - Calling tokenManager.set()
+07-08 02:14:37.465 18022 18095 I ReactNativeJS: [AUTH] STEP 5 - tokenManager.set() completed
+07-08 02:14:37.465 18022 18095 I ReactNativeJS: [AUTH] STEP 6 - Updating Zustand
+07-08 02:14:37.466 18022 18095 I ReactNativeJS: [AUTH] STEP 7 - Login complete
+07-08 02:14:37.495 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:14:37.506 18022 18095 I ReactNativeJS: C
+07-08 02:14:37.507 18022 18095 I ReactNativeJS: [REGISTER] ===== START =====
+07-08 02:14:37.507 18022 18095 I ReactNativeJS: '[REGISTER] Params', { username: 'tester', mobileNumber: '+639178032215' }
+07-08 02:14:37.507 18022 18095 I ReactNativeJS: [REGISTER][STEP 1] Requesting registration challenge...
+07-08 02:14:37.508 18022 18095 I ReactNativeJS: ========== GENERATE KEY ==========
+07-08 02:14:37.508 18022 18095 I ReactNativeJS: 'URL:', '/passkey/generate/key'
+07-08 02:14:37.508 18022 18095 I ReactNativeJS: BODY:
+07-08 02:14:37.508 18022 18095 I ReactNativeJS: {
+07-08 02:14:37.508 18022 18095 I ReactNativeJS:   "userid": "+639178032215",
+07-08 02:14:37.508 18022 18095 I ReactNativeJS:   "username": "tester"
+07-08 02:14:37.508 18022 18095 I ReactNativeJS: }
+07-08 02:14:37.508 18022 18095 I ReactNativeJS: ==================================
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: ========== RESPONSE ==========
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "code": 2001,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "status": "passkey_generated",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "message": "Passkey successfully generated; use the key to call navigator.credentials.create()",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "success": true,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "transid": "m360fe5be3250835988aabd7e70566dd347b",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "pin_code": "046949",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "ref_code": "FahPQ4",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "expires_in": 2592000,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "timestamp": 1783448078,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "key": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:     "publicKey": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "rp": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "name": "Laravel",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "id": "dev.m360.com.ph"
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "authenticatorSelection": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "userVerification": "required"
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "user": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "id": "=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "name": "tester",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "displayName": "tester"
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "pubKeyCredParams": [
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "alg": -8
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "alg": -7
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "alg": -257
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       ],
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "attestation": "indirect",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "extensions": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "exts": true
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "timeout": 30000,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "challenge": "=?BINARY?B?AKk7eV66EyouOWJcZp3Ww5xE+ZXGtgamEYY3SmYI6Yg=?=",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "excludeCredentials": []
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:     }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: ==============================
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: [REGISTER][STEP 2] Registration challenge received
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: '[REGISTER][STEP 2] Challenge Metadata', { rpName: 'Laravel',
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   rpId: 'dev.m360.com.ph',
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   userId: '=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=',
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   userName: 'tester' }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: [REGISTER][STEP 2] Full Challenge
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "code": 2001,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "status": "passkey_generated",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "message": "Passkey successfully generated; use the key to call navigator.credentials.create()",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "success": true,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "transid": "m360fe5be3250835988aabd7e70566dd347b",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "pin_code": "046949",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "ref_code": "FahPQ4",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "expires_in": 2592000,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "timestamp": 1783448078,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   "key": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:     "publicKey": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "rp": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "name": "Laravel",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "id": "dev.m360.com.ph"
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "authenticatorSelection": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "userVerification": "required"
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "user": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "id": "=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "name": "tester",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "displayName": "tester"
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "pubKeyCredParams": [
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "alg": -8
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "alg": -7
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:           "alg": -257
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       ],
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "attestation": "indirect",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "extensions": {
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:         "exts": true
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       },
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "timeout": 30000,
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "challenge": "=?BINARY?B?AKk7eV66EyouOWJcZp3Ww5xE+ZXGtgamEYY3SmYI6Yg=?=",
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:       "excludeCredentials": []
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:     }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS:   }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: }
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: [ANDROID] Native Passkey registration
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Raw challenge (backend):', '=?BINARY?B?AKk7eV66EyouOWJcZp3Ww5xE+ZXGtgamEYY3SmYI6Yg=?='
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Decoded challenge (Base64URL):', 'AKk7eV66EyouOWJcZp3Ww5xE-ZXGtgamEYY3SmYI6Yg'
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Raw user.id (backend):', '=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?='
+07-08 02:14:37.864 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Decoded user.id (Base64URL):', 'KzYzOTE3ODAzMjIxNQ'
+07-08 02:14:37.865 18022 18095 I ReactNativeJS: [ANDROID][STEP 3] Full publicKeyOptions passed to create():
+07-08 02:14:37.865 18022 18095 I ReactNativeJS: ========== CREATE INPUT ==========
+07-08 02:14:37.865 18022 18095 I ReactNativeJS: {
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "rp": {
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     "name": "Laravel",
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     "id": "dev.m360.com.ph"
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   },
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "authenticatorSelection": {
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     "userVerification": "required"
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   },
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "user": {
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     "id": "KzYzOTE3ODAzMjIxNQ",
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     "name": "tester",
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     "displayName": "tester"
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   },
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "pubKeyCredParams": [
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     {
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:       "alg": -8
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     },
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     {
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:       "alg": -7
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     },
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     {
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:       "alg": -257
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     }
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   ],
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "attestation": "indirect",
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "extensions": {
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:     "exts": true
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   },
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "timeout": 30000,
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "challenge": "AKk7eV66EyouOWJcZp3Ww5xE-ZXGtgamEYY3SmYI6Yg",
+07-08 02:14:37.865 18022 18095 I ReactNativeJS:   "excludeCredentials": []
+07-08 02:14:37.865 18022 18095 I ReactNativeJS: }
+07-08 02:14:37.865 18022 18095 I ReactNativeJS: ==================================
+07-08 02:14:37.865 18022 18095 I ReactNativeJS: [ANDROID][STEP 4] Calling create()...
+07-08 02:14:39.028 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:14:39.069 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: true
+07-08 02:14:39.069 18022 18095 I ReactNativeJS: [Splash] Navigating to Dashboard
+07-08 02:14:45.546 18022 18095 I ReactNativeJS: [REGISTER] FAILED
+07-08 02:14:45.555 18022 18095 I ReactNativeJS: { [Error: DomError: DataError - RP ID cannot be validated.] code: 'Passkey Create' }
+07-08 02:14:45.555 18022 18095 I ReactNativeJS: ================ ERROR ================
+07-08 02:14:45.556 18022 18095 I ReactNativeJS: { [Error: DomError: DataError - RP ID cannot be validated.] code: 'Passkey Create' }
+07-08 02:14:45.586 18022 18095 I ReactNativeJS: 'MESSAGE:', 'DomError: DataError - RP ID cannot be validated.'
+07-08 02:14:45.588 18022 18095 I ReactNativeJS: 'STACK:', 'Error: DomError: DataError - RP ID cannot be validated.\n    at construct (native)\n    at apply (native)\n    at _construct (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:5080:67)\n    at Wrapper (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:5052:25)\n    at construct (native)\n    at _callSuper (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:4973:110)\n    at CodedError (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:151691:38)'
+07-08 02:14:45.588 18022 18095 I ReactNativeJS: =======================================
+07-08 02:14:45.634 18022 18095 I ReactNativeJS: '[SCREEN] Result:', { success: false,
+07-08 02:14:45.634 18022 18095 I ReactNativeJS:   code: 'REGISTER_EXCEPTION',
+07-08 02:14:45.634 18022 18095 I ReactNativeJS:   method: 'passkey',
+07-08 02:14:45.634 18022 18095 I ReactNativeJS:   message: 'DomError: DataError - RP ID cannot be validated.' }
+07-08 02:14:51.778 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:14:51.831 18022 18095 I ReactNativeJS: Passkey provider logout
+07-08 02:14:53.311 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:14:53.323 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-08 02:14:53.328 18022 18095 I ReactNativeJS: [Splash] Navigating to Login
+07-08 02:16:02.330 18022 18095 I ReactNativeJS: [AUTH] STEP 1 - Starting login
+07-08 02:16:02.330 18022 18095 I ReactNativeJS: [AUTH] STEP 2 - Calling AuthApi.getToken()
+07-08 02:16:02.330 18022 18095 I ReactNativeJS: [TOKEN] START
+07-08 02:16:02.332 18022 18095 I ReactNativeJS: 'AUTH HEADER =', 'Basic Skg0NzRBMjNKNWVKTERPcjoyU2sxSDc4MDhOcGJZRGdHcjBLdFRSYWszcXMwZUdHTw=='
+07-08 02:16:02.333 18022 18095 I ReactNativeJS: 'BODY =', 'grant_type=client_credentials'
+07-08 02:16:02.333 18022 18095 I ReactNativeJS: 'URL =', '/auth/token'
+07-08 02:16:02.333 18022 18095 I ReactNativeJS: 'BASE URL =', 'https://dev.m360.com.ph/verify/v1'
+07-08 02:16:02.333 18022 18095 I ReactNativeJS: 'CLIENT ID =', 'JH474A23J5eJLDOr'
+07-08 02:16:02.334 18022 18095 I ReactNativeJS: 'CLIENT SECRET =', '2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO'
+07-08 02:16:02.817 18022 18095 I ReactNativeJS: [TOKEN] SUCCESS
+07-08 02:16:02.817 18022 18095 I ReactNativeJS: { code: 2000,
+07-08 02:16:02.817 18022 18095 I ReactNativeJS:   status: 'token_generated',
+07-08 02:16:02.817 18022 18095 I ReactNativeJS:   message: 'Auth token generated; short-lived token based on token_type.',
+07-08 02:16:02.817 18022 18095 I ReactNativeJS:   access_token: 'd9Yh4YMnAnHkOxWyiqX0pVPBOBy7FZiB',
+07-08 02:16:02.817 18022 18095 I ReactNativeJS:   token_type: 'Bearer',
+07-08 02:16:02.817 18022 18095 I ReactNativeJS:   expires_in: 3600,
+07-08 02:16:02.817 18022 18095 I ReactNativeJS:   timestamp: 1783448163 }
+07-08 02:16:02.818 18022 18095 I ReactNativeJS: [AUTH] STEP 3 - Token received
+07-08 02:16:02.818 18022 18095 I ReactNativeJS: [AUTH] STEP 4 - Calling tokenManager.set()
+07-08 02:16:02.889 18022 18095 I ReactNativeJS: [AUTH] STEP 5 - tokenManager.set() completed
+07-08 02:16:02.889 18022 18095 I ReactNativeJS: [AUTH] STEP 6 - Updating Zustand
+07-08 02:16:02.895 18022 18095 I ReactNativeJS: [AUTH] STEP 7 - Login complete
+07-08 02:16:02.932 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:16:02.949 18022 18095 I ReactNativeJS: PasskeyProvider: Starting login flow
+07-08 02:16:02.964 18022 18095 I ReactNativeJS: '[LOGIN][STEP 0] Loaded credentials', { pinCode: '', refCode: '' }
+07-08 02:16:04.461 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:16:04.493 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: true
+07-08 02:16:04.494 18022 18095 I ReactNativeJS: [Splash] Navigating to Dashboard
+07-08 02:27:15.488 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:27:15.493 18022 18095 I ReactNativeJS: Passkey provider logout
+07-08 02:27:17.009 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:27:17.011 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-08 02:27:17.011 18022 18095 I ReactNativeJS: [Splash] Navigating to Login
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: Cannot connect to Metro.
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: 
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: Try the following to fix the issue:
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: - Ensure that Metro is running and available on the same network
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: - Ensure that your device/emulator is connected to your machine and has USB debugging enabled - run 'adb devices' to see a list of connected devices
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: - If you're on a physical device connected to the same machine, run 'adb reverse tcp:8081 tcp:8081' to forward requests from your device
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: - If your device is on the same Wi-Fi network, set 'Debug server host & port for device' in 'Dev settings' to your machine's IP address and the port of the local dev server - e.g. 10.0.1.1:8081
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: 
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: URL: 192.168.100.177:8081
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: 
+07-08 02:27:23.545 18022 18095 W ReactNativeJS: Error: undefined
+07-08 02:27:35.150 18022 18095 I ReactNativeJS: '[SCREEN] Register clicked', { username: 'tester', mobileNumber: '+639178032215' }
+07-08 02:27:35.150 18022 18095 I ReactNativeJS: [SCREEN] Calling AuthenticationManager.registerWithPasskey()
+07-08 02:27:35.150 18022 18095 I ReactNativeJS: A
+07-08 02:27:35.150 18022 18095 I ReactNativeJS: B
+07-08 02:27:35.150 18022 18095 I ReactNativeJS: [AUTH] STEP 1 - Starting login
+07-08 02:27:35.151 18022 18095 I ReactNativeJS: [AUTH] STEP 2 - Calling AuthApi.getToken()
+07-08 02:27:35.151 18022 18095 I ReactNativeJS: [TOKEN] START
+07-08 02:27:35.151 18022 18095 I ReactNativeJS: 'AUTH HEADER =', 'Basic Skg0NzRBMjNKNWVKTERPcjoyU2sxSDc4MDhOcGJZRGdHcjBLdFRSYWszcXMwZUdHTw=='
+07-08 02:27:35.151 18022 18095 I ReactNativeJS: 'BODY =', 'grant_type=client_credentials'
+07-08 02:27:35.151 18022 18095 I ReactNativeJS: 'URL =', '/auth/token'
+07-08 02:27:35.151 18022 18095 I ReactNativeJS: 'BASE URL =', 'https://dev.m360.com.ph/verify/v1'
+07-08 02:27:35.151 18022 18095 I ReactNativeJS: 'CLIENT ID =', 'JH474A23J5eJLDOr'
+07-08 02:27:35.151 18022 18095 I ReactNativeJS: 'CLIENT SECRET =', '2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO'
+07-08 02:27:36.604 18022 18095 I ReactNativeJS: [TOKEN] SUCCESS
+07-08 02:27:36.605 18022 18095 I ReactNativeJS: { code: 2000,
+07-08 02:27:36.605 18022 18095 I ReactNativeJS:   status: 'token_generated',
+07-08 02:27:36.605 18022 18095 I ReactNativeJS:   message: 'Auth token generated; short-lived token based on token_type.',
+07-08 02:27:36.605 18022 18095 I ReactNativeJS:   access_token: 'ZqdqUFuWdHMBbIdACHQ9iqol5LQgqsZI',
+07-08 02:27:36.605 18022 18095 I ReactNativeJS:   token_type: 'Bearer',
+07-08 02:27:36.605 18022 18095 I ReactNativeJS:   expires_in: 3600,
+07-08 02:27:36.605 18022 18095 I ReactNativeJS:   timestamp: 1783448857 }
+07-08 02:27:36.605 18022 18095 I ReactNativeJS: [AUTH] STEP 3 - Token received
+07-08 02:27:36.605 18022 18095 I ReactNativeJS: [AUTH] STEP 4 - Calling tokenManager.set()
+07-08 02:27:36.638 18022 18095 I ReactNativeJS: [AUTH] STEP 5 - tokenManager.set() completed
+07-08 02:27:36.638 18022 18095 I ReactNativeJS: [AUTH] STEP 6 - Updating Zustand
+07-08 02:27:36.639 18022 18095 I ReactNativeJS: [AUTH] STEP 7 - Login complete
+07-08 02:27:36.669 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:27:36.677 18022 18095 I ReactNativeJS: C
+07-08 02:27:36.680 18022 18095 I ReactNativeJS: [REGISTER] ===== START =====
+07-08 02:27:36.683 18022 18095 I ReactNativeJS: '[REGISTER] Params', { username: 'tester', mobileNumber: '+639178032215' }
+07-08 02:27:36.683 18022 18095 I ReactNativeJS: [REGISTER][STEP 1] Requesting registration challenge...
+07-08 02:27:36.685 18022 18095 I ReactNativeJS: ========== GENERATE KEY ==========
+07-08 02:27:36.685 18022 18095 I ReactNativeJS: 'URL:', '/passkey/generate/key'
+07-08 02:27:36.685 18022 18095 I ReactNativeJS: BODY:
+07-08 02:27:36.685 18022 18095 I ReactNativeJS: {
+07-08 02:27:36.685 18022 18095 I ReactNativeJS:   "userid": "+639178032215",
+07-08 02:27:36.685 18022 18095 I ReactNativeJS:   "username": "tester"
+07-08 02:27:36.685 18022 18095 I ReactNativeJS: }
+07-08 02:27:36.685 18022 18095 I ReactNativeJS: ==================================
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: ========== RESPONSE ==========
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "code": 2001,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "status": "passkey_generated",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "message": "Passkey successfully generated; use the key to call navigator.credentials.create()",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "success": true,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "transid": "m36040a21763a50441bff5ecf78575053078",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "pin_code": "466282",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "ref_code": "sXGyPt",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "expires_in": 2592000,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "timestamp": 1783448857,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "key": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "publicKey": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "rp": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "name": "Laravel",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "id": "dev.m360.com.ph"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "authenticatorSelection": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "userVerification": "required"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "user": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "id": "=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "name": "tester",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "displayName": "tester"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "pubKeyCredParams": [
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "alg": -8
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "alg": -7
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "alg": -257
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       ],
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "attestation": "indirect",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "extensions": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "exts": true
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "timeout": 30000,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "challenge": "=?BINARY?B?dZb+zZTjyRgpKGJU5SLKGBswT4y7UfdaVzfyB8nLCro=?=",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "excludeCredentials": []
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: ==============================
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: [REGISTER][STEP 2] Registration challenge received
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: '[REGISTER][STEP 2] Challenge Metadata', { rpName: 'Laravel',
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   rpId: 'dev.m360.com.ph',
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   userId: '=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=',
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   userName: 'tester' }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: [REGISTER][STEP 2] Full Challenge
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "code": 2001,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "status": "passkey_generated",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "message": "Passkey successfully generated; use the key to call navigator.credentials.create()",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "success": true,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "transid": "m36040a21763a50441bff5ecf78575053078",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "pin_code": "466282",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "ref_code": "sXGyPt",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "expires_in": 2592000,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "timestamp": 1783448857,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "key": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "publicKey": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "rp": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "name": "Laravel",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "id": "dev.m360.com.ph"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "authenticatorSelection": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "userVerification": "required"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "user": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "id": "=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "name": "tester",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "displayName": "tester"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "pubKeyCredParams": [
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "alg": -8
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "alg": -7
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:           "alg": -257
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       ],
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "attestation": "indirect",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "extensions": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:         "exts": true
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "timeout": 30000,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "challenge": "=?BINARY?B?dZb+zZTjyRgpKGJU5SLKGBswT4y7UfdaVzfyB8nLCro=?=",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "excludeCredentials": []
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: [ANDROID] Native Passkey registration
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Raw challenge (backend):', '=?BINARY?B?dZb+zZTjyRgpKGJU5SLKGBswT4y7UfdaVzfyB8nLCro=?='
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Decoded challenge (Base64URL):', 'dZb-zZTjyRgpKGJU5SLKGBswT4y7UfdaVzfyB8nLCro'
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Raw user.id (backend):', '=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?='
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Decoded user.id (Base64URL):', 'KzYzOTE3ODAzMjIxNQ'
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: [ANDROID][STEP 3] Full publicKeyOptions passed to create():
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: ========== CREATE INPUT ==========
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "rp": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "name": "Laravel",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "id": "dev.m360.com.ph"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "authenticatorSelection": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "userVerification": "required"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "user": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "id": "KzYzOTE3ODAzMjIxNQ",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "name": "tester",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "displayName": "tester"
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "pubKeyCredParams": [
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "alg": -8
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "alg": -7
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:       "alg": -257
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   ],
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "attestation": "indirect",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "extensions": {
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:     "exts": true
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   },
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "timeout": 30000,
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "challenge": "dZb-zZTjyRgpKGJU5SLKGBswT4y7UfdaVzfyB8nLCro",
+07-08 02:27:37.095 18022 18095 I ReactNativeJS:   "excludeCredentials": []
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: }
+07-08 02:27:37.095 18022 18095 I ReactNativeJS: ==================================
+07-08 02:27:37.096 18022 18095 I ReactNativeJS: [ANDROID][STEP 4] Calling create()...
+07-08 02:27:38.193 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:27:38.209 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: true
+07-08 02:27:38.209 18022 18095 I ReactNativeJS: [Splash] Navigating to Dashboard
+07-08 02:29:19.271 18022 18095 I ReactNativeJS: [REGISTER] FAILED
+07-08 02:29:19.275 18022 18095 I ReactNativeJS: { [Error: DomError: SecurityError - The incoming request cannot be validated] code: 'Passkey Create' }
+07-08 02:29:19.276 18022 18095 I ReactNativeJS: ================ ERROR ================
+07-08 02:29:19.276 18022 18095 I ReactNativeJS: { [Error: DomError: SecurityError - The incoming request cannot be validated] code: 'Passkey Create' }
+07-08 02:29:19.280 18022 18095 I ReactNativeJS: 'MESSAGE:', 'DomError: SecurityError - The incoming request cannot be validated'
+07-08 02:29:19.281 18022 18095 I ReactNativeJS: 'STACK:', 'Error: DomError: SecurityError - The incoming request cannot be validated\n    at construct (native)\n    at apply (native)\n    at _construct (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:5080:67)\n    at Wrapper (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:5052:25)\n    at construct (native)\n    at _callSuper (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:4973:110)\n    at CodedError (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:151691:38)'
+07-08 02:29:19.282 18022 18095 I ReactNativeJS: =======================================
+07-08 02:29:19.298 18022 18095 I ReactNativeJS: '[SCREEN] Result:', { success: false,
+07-08 02:29:19.298 18022 18095 I ReactNativeJS:   code: 'REGISTER_EXCEPTION',
+07-08 02:29:19.298 18022 18095 I ReactNativeJS:   method: 'passkey',
+07-08 02:29:19.298 18022 18095 I ReactNativeJS:   message: 'DomError: SecurityError - The incoming request cannot be validated' }
+07-08 02:29:21.077 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:29:21.089 18022 18095 I ReactNativeJS: Passkey provider logout
+07-08 02:29:22.611 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:29:22.624 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-08 02:29:22.624 18022 18095 I ReactNativeJS: [Splash] Navigating to Login
+07-08 02:29:44.101 18022 18095 I ReactNativeJS: '[SCREEN] Register clicked', { username: 'tester', mobileNumber: '+639178032215' }
+07-08 02:29:44.101 18022 18095 I ReactNativeJS: [SCREEN] Calling AuthenticationManager.registerWithPasskey()
+07-08 02:29:44.103 18022 18095 I ReactNativeJS: A
+07-08 02:29:44.103 18022 18095 I ReactNativeJS: B
+07-08 02:29:44.106 18022 18095 I ReactNativeJS: [AUTH] STEP 1 - Starting login
+07-08 02:29:44.106 18022 18095 I ReactNativeJS: [AUTH] STEP 2 - Calling AuthApi.getToken()
+07-08 02:29:44.108 18022 18095 I ReactNativeJS: [TOKEN] START
+07-08 02:29:44.109 18022 18095 I ReactNativeJS: 'AUTH HEADER =', 'Basic Skg0NzRBMjNKNWVKTERPcjoyU2sxSDc4MDhOcGJZRGdHcjBLdFRSYWszcXMwZUdHTw=='
+07-08 02:29:44.109 18022 18095 I ReactNativeJS: 'BODY =', 'grant_type=client_credentials'
+07-08 02:29:44.110 18022 18095 I ReactNativeJS: 'URL =', '/auth/token'
+07-08 02:29:44.111 18022 18095 I ReactNativeJS: 'BASE URL =', 'https://dev.m360.com.ph/verify/v1'
+07-08 02:29:44.111 18022 18095 I ReactNativeJS: 'CLIENT ID =', 'JH474A23J5eJLDOr'
+07-08 02:29:44.111 18022 18095 I ReactNativeJS: 'CLIENT SECRET =', '2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO'
+07-08 02:29:45.434 18022 18095 I ReactNativeJS: [TOKEN] SUCCESS
+07-08 02:29:45.437 18022 18095 I ReactNativeJS: { code: 2000,
+07-08 02:29:45.437 18022 18095 I ReactNativeJS:   status: 'token_generated',
+07-08 02:29:45.437 18022 18095 I ReactNativeJS:   message: 'Auth token generated; short-lived token based on token_type.',
+07-08 02:29:45.437 18022 18095 I ReactNativeJS:   access_token: 'Q9TtU5Vh3ZWSrRUyGVwJUA3tdxHaKxXR',
+07-08 02:29:45.437 18022 18095 I ReactNativeJS:   token_type: 'Bearer',
+07-08 02:29:45.437 18022 18095 I ReactNativeJS:   expires_in: 3600,
+07-08 02:29:45.437 18022 18095 I ReactNativeJS:   timestamp: 1783448986 }
+07-08 02:29:45.438 18022 18095 I ReactNativeJS: [AUTH] STEP 3 - Token received
+07-08 02:29:45.438 18022 18095 I ReactNativeJS: [AUTH] STEP 4 - Calling tokenManager.set()
+07-08 02:29:45.470 18022 18095 I ReactNativeJS: [AUTH] STEP 5 - tokenManager.set() completed
+07-08 02:29:45.472 18022 18095 I ReactNativeJS: [AUTH] STEP 6 - Updating Zustand
+07-08 02:29:45.472 18022 18095 I ReactNativeJS: [AUTH] STEP 7 - Login complete
+07-08 02:29:45.500 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:29:45.505 18022 18095 I ReactNativeJS: C
+07-08 02:29:45.507 18022 18095 I ReactNativeJS: [REGISTER] ===== START =====
+07-08 02:29:45.507 18022 18095 I ReactNativeJS: '[REGISTER] Params', { username: 'tester', mobileNumber: '+639178032215' }
+07-08 02:29:45.508 18022 18095 I ReactNativeJS: [REGISTER][STEP 1] Requesting registration challenge...
+07-08 02:29:45.508 18022 18095 I ReactNativeJS: ========== GENERATE KEY ==========
+07-08 02:29:45.508 18022 18095 I ReactNativeJS: 'URL:', '/passkey/generate/key'
+07-08 02:29:45.508 18022 18095 I ReactNativeJS: BODY:
+07-08 02:29:45.508 18022 18095 I ReactNativeJS: {
+07-08 02:29:45.508 18022 18095 I ReactNativeJS:   "userid": "+639178032215",
+07-08 02:29:45.508 18022 18095 I ReactNativeJS:   "username": "tester"
+07-08 02:29:45.508 18022 18095 I ReactNativeJS: }
+07-08 02:29:45.508 18022 18095 I ReactNativeJS: ==================================
+07-08 02:29:45.946 18022 18095 I ReactNativeJS: ========== RESPONSE ==========
+07-08 02:29:45.946 18022 18095 I ReactNativeJS: {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "code": 2001,
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "status": "passkey_generated",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "message": "Passkey successfully generated; use the key to call navigator.credentials.create()",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "success": true,
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "transid": "m360a8c74f5bb723a081ff587f624ec20364",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "pin_code": "118430",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "ref_code": "df6EJu",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "expires_in": 2592000,
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "timestamp": 1783448986,
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   "key": {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:     "publicKey": {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "rp": {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         "name": "Laravel",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         "id": "dev.m360.com.ph"
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       },
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "authenticatorSelection": {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         "userVerification": "required"
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       },
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "user": {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         "id": "=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         "name": "tester",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         "displayName": "tester"
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       },
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "pubKeyCredParams": [
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:           "alg": -8
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         },
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:           "alg": -7
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         },
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:           "alg": -257
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         }
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       ],
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "attestation": "indirect",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "extensions": {
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:         "exts": true
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       },
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "timeout": 30000,
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "challenge": "=?BINARY?B?5gbDC/Xg9+sdYKYw47PZtgIrBPJsCtWTdAjU/WkQZzA=?=",
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:       "excludeCredentials": []
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:     }
+07-08 02:29:45.946 18022 18095 I ReactNativeJS:   }
+07-08 02:29:45.946 18022 18095 I ReactNativeJS: }
+07-08 02:29:45.946 18022 18095 I ReactNativeJS: ==============================
+07-08 02:29:45.946 18022 18095 I ReactNativeJS: [REGISTER][STEP 2] Registration challenge received
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: '[REGISTER][STEP 2] Challenge Metadata', { rpName: 'Laravel',
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   rpId: 'dev.m360.com.ph',
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   userId: '=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=',
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   userName: 'tester' }
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: [REGISTER][STEP 2] Full Challenge
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "code": 2001,
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "status": "passkey_generated",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "message": "Passkey successfully generated; use the key to call navigator.credentials.create()",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "success": true,
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "transid": "m360a8c74f5bb723a081ff587f624ec20364",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "pin_code": "118430",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "ref_code": "df6EJu",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "expires_in": 2592000,
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "timestamp": 1783448986,
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "key": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     "publicKey": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "rp": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         "name": "Laravel",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         "id": "dev.m360.com.ph"
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "authenticatorSelection": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         "userVerification": "required"
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "user": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         "id": "=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?=",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         "name": "tester",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         "displayName": "tester"
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "pubKeyCredParams": [
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:           "alg": -8
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:           "alg": -7
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:           "type": "public-key",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:           "alg": -257
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         }
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       ],
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "attestation": "indirect",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "extensions": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:         "exts": true
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "timeout": 30000,
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "challenge": "=?BINARY?B?5gbDC/Xg9+sdYKYw47PZtgIrBPJsCtWTdAjU/WkQZzA=?=",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "excludeCredentials": []
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     }
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   }
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: }
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: [ANDROID] Native Passkey registration
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Raw challenge (backend):', '=?BINARY?B?5gbDC/Xg9+sdYKYw47PZtgIrBPJsCtWTdAjU/WkQZzA=?='
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Decoded challenge (Base64URL):', '5gbDC_Xg9-sdYKYw47PZtgIrBPJsCtWTdAjU_WkQZzA'
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Raw user.id (backend):', '=?BINARY?B?KzYzOTE3ODAzMjIxNQ==?='
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: '[ANDROID][STEP 3] Decoded user.id (Base64URL):', 'KzYzOTE3ODAzMjIxNQ'
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: [ANDROID][STEP 3] Full publicKeyOptions passed to create():
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: ========== CREATE INPUT ==========
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "rp": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     "name": "Laravel",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     "id": "dev.m360.com.ph"
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "authenticatorSelection": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     "userVerification": "required"
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "user": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     "id": "KzYzOTE3ODAzMjIxNQ",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     "name": "tester",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     "displayName": "tester"
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "pubKeyCredParams": [
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "alg": -8
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "alg": -7
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "type": "public-key",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:       "alg": -257
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     }
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   ],
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "attestation": "indirect",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "extensions": {
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:     "exts": true
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   },
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "timeout": 30000,
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "challenge": "5gbDC_Xg9-sdYKYw47PZtgIrBPJsCtWTdAjU_WkQZzA",
+07-08 02:29:45.947 18022 18095 I ReactNativeJS:   "excludeCredentials": []
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: }
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: ==================================
+07-08 02:29:45.947 18022 18095 I ReactNativeJS: [ANDROID][STEP 4] Calling create()...
+07-08 02:29:47.028 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:29:47.051 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: true
+07-08 02:29:47.051 18022 18095 I ReactNativeJS: [Splash] Navigating to Dashboard
+07-08 02:29:51.919 18022 18095 I ReactNativeJS: [REGISTER] FAILED
+07-08 02:29:51.919 18022 18095 I ReactNativeJS: { [Error: DomError: SecurityError - The incoming request cannot be validated] code: 'Passkey Create' }
+07-08 02:29:51.919 18022 18095 I ReactNativeJS: ================ ERROR ================
+07-08 02:29:51.919 18022 18095 I ReactNativeJS: { [Error: DomError: SecurityError - The incoming request cannot be validated] code: 'Passkey Create' }
+07-08 02:29:51.920 18022 18095 I ReactNativeJS: 'MESSAGE:', 'DomError: SecurityError - The incoming request cannot be validated'
+07-08 02:29:51.930 18022 18095 I ReactNativeJS: 'STACK:', 'Error: DomError: SecurityError - The incoming request cannot be validated\n    at construct (native)\n    at apply (native)\n    at _construct (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:5080:67)\n    at Wrapper (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:5052:25)\n    at construct (native)\n    at _callSuper (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:4973:110)\n    at CodedError (http://192.168.100.177:8081/index.ts.bundle//&platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:151691:38)'
+07-08 02:29:51.931 18022 18095 I ReactNativeJS: =======================================
+07-08 02:29:51.932 18022 18095 I ReactNativeJS: '[SCREEN] Result:', { success: false,
+07-08 02:29:51.932 18022 18095 I ReactNativeJS:   code: 'REGISTER_EXCEPTION',
+07-08 02:29:51.932 18022 18095 I ReactNativeJS:   method: 'passkey',
+07-08 02:29:51.932 18022 18095 I ReactNativeJS:   message: 'DomError: SecurityError - The incoming request cannot be validated' }
+07-08 02:29:58.808 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:29:58.814 18022 18095 I ReactNativeJS: Passkey provider logout
+07-08 02:30:00.343 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:30:00.349 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-08 02:30:00.349 18022 18095 I ReactNativeJS: [Splash] Navigating to Login
+07-08 02:30:11.148 18022 18095 I ReactNativeJS: [AUTH] STEP 1 - Starting login
+07-08 02:30:11.153 18022 18095 I ReactNativeJS: [AUTH] STEP 2 - Calling AuthApi.getToken()
+07-08 02:30:11.153 18022 18095 I ReactNativeJS: [TOKEN] START
+07-08 02:30:11.156 18022 18095 I ReactNativeJS: 'AUTH HEADER =', 'Basic Skg0NzRBMjNKNWVKTERPcjoyU2sxSDc4MDhOcGJZRGdHcjBLdFRSYWszcXMwZUdHTw=='
+07-08 02:30:11.157 18022 18095 I ReactNativeJS: 'BODY =', 'grant_type=client_credentials'
+07-08 02:30:11.157 18022 18095 I ReactNativeJS: 'URL =', '/auth/token'
+07-08 02:30:11.157 18022 18095 I ReactNativeJS: 'BASE URL =', 'https://dev.m360.com.ph/verify/v1'
+07-08 02:30:11.158 18022 18095 I ReactNativeJS: 'CLIENT ID =', 'JH474A23J5eJLDOr'
+07-08 02:30:11.159 18022 18095 I ReactNativeJS: 'CLIENT SECRET =', '2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO'
+07-08 02:30:11.518 18022 18095 I ReactNativeJS: [TOKEN] SUCCESS
+07-08 02:30:11.523 18022 18095 I ReactNativeJS: { code: 2000,
+07-08 02:30:11.523 18022 18095 I ReactNativeJS:   status: 'token_generated',
+07-08 02:30:11.523 18022 18095 I ReactNativeJS:   message: 'Auth token generated; short-lived token based on token_type.',
+07-08 02:30:11.523 18022 18095 I ReactNativeJS:   access_token: 'r4Wup1fvqM77Euxfl7CCWYpSIWl3SpbH',
+07-08 02:30:11.523 18022 18095 I ReactNativeJS:   token_type: 'Bearer',
+07-08 02:30:11.523 18022 18095 I ReactNativeJS:   expires_in: 3600,
+07-08 02:30:11.523 18022 18095 I ReactNativeJS:   timestamp: 1783449012 }
+07-08 02:30:11.528 18022 18095 I ReactNativeJS: [AUTH] STEP 3 - Token received
+07-08 02:30:11.528 18022 18095 I ReactNativeJS: [AUTH] STEP 4 - Calling tokenManager.set()
+07-08 02:30:11.568 18022 18095 I ReactNativeJS: [AUTH] STEP 5 - tokenManager.set() completed
+07-08 02:30:11.568 18022 18095 I ReactNativeJS: [AUTH] STEP 6 - Updating Zustand
+07-08 02:30:11.568 18022 18095 I ReactNativeJS: [AUTH] STEP 7 - Login complete
+07-08 02:30:11.636 18022 18095 I ReactNativeJS: [Splash] Started
+07-08 02:30:11.650 18022 18095 I ReactNativeJS: PasskeyProvider: Starting login flow
+07-08 02:30:11.656 18022 18095 I ReactNativeJS: '[LOGIN][STEP 0] Loaded credentials', { pinCode: '', refCode: '' }
+07-08 02:30:13.168 18022 18095 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-08 02:30:13.179 18022 18095 I ReactNativeJS: [Splash] Initialization complete. Authenticated: true
+07-08 02:30:13.179 18022 18095 I ReactNativeJS: [Splash] Navigating to Dashboard

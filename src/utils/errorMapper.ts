@@ -50,9 +50,10 @@ export const mapError = (error: unknown, requestId?: string): AppError => {
       case 404:
         return {
           code: 'NOT_FOUND',
-          message: 'Resource not found',
+          message: data?.message || 'Resource not found',
           status,
           requestId,
+          details: data,
         };
       case 409:
         return {

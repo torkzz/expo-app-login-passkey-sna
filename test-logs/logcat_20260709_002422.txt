@@ -1,0 +1,27 @@
+--------- beginning of main
+07-09 00:25:47.730 11354 11715 I ReactNativeJS: 'Passkey supported:', true
+07-09 00:25:55.586 11354 11715 I ReactNativeJS: Running "main" with {"rootTag":1,"initialProps":{},"fabric":true}
+07-09 00:25:57.435 11354 11715 I ReactNativeJS: [Splash] Started
+07-09 00:25:59.035 11354 11715 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-09 00:26:00.764 11354 11715 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-09 00:26:00.765 11354 11715 I ReactNativeJS: [Splash] Navigating to Login
+07-09 00:26:26.996 11354 11715 I ReactNativeJS: '[SCREEN] Register clicked', { username: 'tester', mobileNumber: '+639178032215' }
+07-09 00:26:26.997 11354 11715 I ReactNativeJS: [SCREEN] Calling AuthenticationManager.registerWithPasskey()
+07-09 00:26:27.027 11354 11715 I ReactNativeJS: A
+07-09 00:26:27.028 11354 11715 I ReactNativeJS: B
+07-09 00:26:27.031 11354 11715 I ReactNativeJS: [AUTH] STEP 1 - Starting login
+07-09 00:26:27.031 11354 11715 I ReactNativeJS: [AUTH] STEP 2 - Calling AuthApi.getToken()
+07-09 00:26:27.035 11354 11715 I ReactNativeJS: [TOKEN] START
+07-09 00:26:27.040 11354 11715 I ReactNativeJS: 'AUTH HEADER =', 'Basic Skg0NzRBMjNKNWVKTERPcjoyU2sxSDc4MDhOcGJZRGdHcjBLdFRSYWszcXMwZUdHTw=='
+07-09 00:26:27.040 11354 11715 I ReactNativeJS: 'BODY =', 'grant_type=client_credentials'
+07-09 00:26:27.040 11354 11715 I ReactNativeJS: 'URL =', '/auth/token'
+07-09 00:26:27.040 11354 11715 I ReactNativeJS: 'BASE URL =', 'https://dev.m360.com.ph/verify/v1'
+07-09 00:26:27.041 11354 11715 I ReactNativeJS: 'CLIENT ID =', 'JH474A23J5eJLDOr'
+07-09 00:26:27.043 11354 11715 I ReactNativeJS: 'CLIENT SECRET =', '2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO'
+07-09 00:26:33.142 11354 11715 I ReactNativeJS: ================ TOKEN ERROR ================
+07-09 00:26:33.144 11354 11715 I ReactNativeJS: { code: 'NETWORK_ERROR',
+07-09 00:26:33.144 11354 11715 I ReactNativeJS:   message: 'Network connection failed or timed out',
+07-09 00:26:33.144 11354 11715 I ReactNativeJS:   requestId: '6797ff00-f655-494f-9d8f-ae83d9e5064e' }
+07-09 00:26:33.149 11354 11715 I ReactNativeJS: '[SCREEN] Result:', { success: false,
+07-09 00:26:33.149 11354 11715 I ReactNativeJS:   method: 'passkey',
+07-09 00:26:33.149 11354 11715 I ReactNativeJS:   message: 'Network connection failed or timed out' }

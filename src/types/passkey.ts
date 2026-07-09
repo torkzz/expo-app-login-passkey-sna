@@ -88,27 +88,34 @@ export interface LoginRequest {
 }
 
 export interface LoginRequestResponse {
-  challenge: string;
-  timeout?: number;
-  rpId?: string;
-  allowCredentials?: {
-    type: string;
-    id: string;
-    transports?: string[];
-  }[];
-  userVerification?: string;
+  code: number;
+  status?: string;
+  message?: string;
+  transid: string;
+  pin_code: string;
+  ref_code: string;
+  key: {
+    publicKey: {
+      challenge: string;
+      timeout?: number;
+      rpId?: string;
+      allowCredentials?: {
+        type: string;
+        id: string;
+        transports?: string[];
+      }[];
+      userVerification?: string;
+    };
+  };
 }
 
 export interface LoginVerifyRequest {
-  id: string;
-  rawId: string;
-  type: string;
-  response: {
-    authenticatorData: string;
-    clientDataJSON: string;
-    signature: string;
-    userHandle?: string;
-  };
+  pin_code: string;
+  ref_code: string;
+  credentialId: string;
+  clientDataJSON: string;
+  authenticatorData: string;
+  signature: string;
 }
 
 export interface LoginVerifyResponse {

@@ -1,0 +1,31 @@
+--------- beginning of main
+07-09 00:27:53.572 24145 24379 I ReactNativeJS: 'Passkey supported:', true
+07-09 00:27:56.594 24145 24379 I ReactNativeJS: Running "main" with {"rootTag":1,"initialProps":{},"fabric":true}
+07-09 00:27:57.140 24145 24379 I ReactNativeJS: [Splash] Started
+07-09 00:27:58.656 24145 24379 I ReactNativeJS: [Splash] Calling AuthenticationManager.initialize()
+07-09 00:27:59.014 24145 24379 I ReactNativeJS: [Splash] Initialization complete. Authenticated: false
+07-09 00:27:59.014 24145 24379 I ReactNativeJS: [Splash] Navigating to Login
+07-09 00:28:14.180 24145 24379 I ReactNativeJS: [AUTH] STEP 1 - Starting login
+07-09 00:28:14.180 24145 24379 I ReactNativeJS: [AUTH] STEP 2 - Calling AuthApi.getToken()
+07-09 00:28:14.182 24145 24379 I ReactNativeJS: [TOKEN] START
+07-09 00:28:14.193 24145 24379 I ReactNativeJS: 'AUTH HEADER =', 'Basic Skg0NzRBMjNKNWVKTERPcjoyU2sxSDc4MDhOcGJZRGdHcjBLdFRSYWszcXMwZUdHTw=='
+07-09 00:28:14.194 24145 24379 I ReactNativeJS: 'BODY =', 'grant_type=client_credentials'
+07-09 00:28:14.195 24145 24379 I ReactNativeJS: 'URL =', '/auth/token'
+07-09 00:28:14.195 24145 24379 I ReactNativeJS: 'BASE URL =', 'https://dev.m360.com.ph/verify/v1'
+07-09 00:28:14.196 24145 24379 I ReactNativeJS: 'CLIENT ID =', 'JH474A23J5eJLDOr'
+07-09 00:28:14.197 24145 24379 I ReactNativeJS: 'CLIENT SECRET =', '2Sk1H7808NpbYDgGr0KtTRak3qs0eGGO'
+07-09 00:28:14.874 24145 24379 I ReactNativeJS: [TOKEN] SUCCESS
+07-09 00:28:14.879 24145 24379 I ReactNativeJS: { code: 2000,
+07-09 00:28:14.879 24145 24379 I ReactNativeJS:   status: 'token_generated',
+07-09 00:28:14.879 24145 24379 I ReactNativeJS:   message: 'Auth token generated; short-lived token based on token_type.',
+07-09 00:28:14.879 24145 24379 I ReactNativeJS:   access_token: 'SpMVZcG3dYItFXxNmj8n482ZeIMrx0bZ',
+07-09 00:28:14.879 24145 24379 I ReactNativeJS:   token_type: 'Bearer',
+07-09 00:28:14.879 24145 24379 I ReactNativeJS:   expires_in: 3600,
+07-09 00:28:14.879 24145 24379 I ReactNativeJS:   timestamp: 1783528094 }
+07-09 00:28:14.879 24145 24379 I ReactNativeJS: [AUTH] STEP 3 - Token received
+07-09 00:28:14.880 24145 24379 I ReactNativeJS: [AUTH] STEP 4 - Calling tokenManager.set()
+07-09 00:28:15.051 24145 24379 I ReactNativeJS: [AUTH] STEP 5 - tokenManager.set() completed
+07-09 00:28:15.051 24145 24379 I ReactNativeJS: [AUTH] STEP 6 - Updating Zustand
+07-09 00:28:15.057 24145 24379 I ReactNativeJS: [AUTH] STEP 7 - Login complete
+07-09 00:28:15.060 24145 24379 I ReactNativeJS: PasskeyProvider: Starting login flow
+07-09 00:28:15.063 24145 24379 I ReactNativeJS: '[LOGIN][STEP 0] Loaded credentials', { pinCode: '', refCode: '' }

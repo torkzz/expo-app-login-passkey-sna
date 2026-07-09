@@ -1,3 +1,4 @@
+import * as SecureStore from 'expo-secure-store';
 import { PasskeyProvider } from '../providers/PasskeyProvider';
 import { SNAProvider } from '../providers/SNAProvider';
 import { AuthService } from './AuthService';
@@ -41,11 +42,25 @@ export class AuthenticationManager {
     logger.info('AuthenticationManager: Starting initialization');
 
     try {
-      const tokens = await tokenManager.restore();
-      logger.info('AuthenticationManager: Token restoration complete');
+      const [tokens, isLoggedIn, userProfileStr] = await Promise.all([
+        tokenManager.restore(),
+        SecureStore.getItemAsync('is_logged_in'),
+        SecureStore.getItemAsync('user_profile'),
+      ]);
+      logger.info('AuthenticationManager: Token restoration complete', { isLoggedIn });
 
-      if (tokens && !tokenManager.isExpired()) {
-        logger.info('AuthenticationManager: Valid session found, restoring...');
+      if (tokens && !tokenManager.isExpired() && isLoggedIn === 'true') {
+        logger.info('AuthenticationManager: Valid user session found, restoring...');
+        let user: User | undefined;
+        if (userProfileStr) {
+          try {
+            user = JSON.parse(userProfileStr);
+          } catch (e) {
+            logger.warn('Failed to parse saved user profile', e);
+          }
+        }
+        
+        useAuthStore.getState().setUser(user);
         useAuthStore.getState().setSession({
           accessToken: tokens.accessToken,
           refreshToken: tokens.refreshToken,
@@ -54,7 +69,7 @@ export class AuthenticationManager {
         });
         logger.info('AuthenticationManager: Session restored successfully');
       } else {
-        logger.info('AuthenticationManager: No valid session found during initialization');
+        logger.info('AuthenticationManager: No valid user session found during initialization');
         // Clear everything to be safe, but don't perform network logout
         useAuthStore.getState().clearSession();
       }
@@ -104,6 +119,10 @@ export class AuthenticationManager {
 
       if (result.success && result.user) {
         logger.info('AuthenticationManager: Passkey registration successful');
+        await Promise.all([
+          SecureStore.setItemAsync('is_logged_in', 'true'),
+          SecureStore.setItemAsync('user_profile', JSON.stringify(result.user)),
+        ]);
         useAuthStore.getState().setUser(result.user);
         useAuthStore.getState().setSession({ authenticated: true });
       } else {
@@ -140,9 +159,11 @@ export class AuthenticationManager {
 
       if (result.success && result.user) {
         logger.info(`Login successful with method: ${result.method}`);
+        await Promise.all([
+          SecureStore.setItemAsync('is_logged_in', 'true'),
+          SecureStore.setItemAsync('user_profile', JSON.stringify(result.user)),
+        ]);
         useAuthStore.getState().setUser(result.user);
-        // Note: authenticated status is already true if we have a valid OAuth token,
-        // but we can refine this state if 'authenticated' should mean 'user-authenticated'
         useAuthStore.getState().setSession({ authenticated: true });
       }
 
@@ -162,6 +183,10 @@ export class AuthenticationManager {
    */
   public async logout(): Promise<void> {
     logger.info('Performing application logout');
+    await Promise.all([
+      SecureStore.deleteItemAsync('is_logged_in'),
+      SecureStore.deleteItemAsync('user_profile'),
+    ]);
     await this.authService.logout();
     await this.passkeyProvider.logout();
     await this.snaProvider.logout();

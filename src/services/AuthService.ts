@@ -79,15 +79,7 @@ export class AuthService {
 
     console.log("[AUTH] STEP 5 - tokenManager.set() completed");
 
-    console.log("[AUTH] STEP 6 - Updating Zustand");
-    useAuthStore.getState().setSession({
-      accessToken: response.access_token,
-      refreshToken: response.refresh_token,
-      expiresAt,
-      authenticated: true,
-    });
-
-    console.log("[AUTH] STEP 7 - Login complete");
+    console.log("[AUTH] STEP 6 - Login complete (token persisted via TokenManager)");
   }
 
   /**

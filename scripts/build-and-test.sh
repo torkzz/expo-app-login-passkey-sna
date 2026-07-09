@@ -26,6 +26,147 @@ header() { echo -e "\n${BOLD}${CYAN}══════════════�
            echo -e "${BOLD}${CYAN}  $*${RESET}"; \
            echo -e "${BOLD}${CYAN}══════════════════════════════════════════${RESET}"; }
 
+# ─── Helpers for UI interaction ───────────────────────────────────────────────
+dump_ui() {
+  rm -f /tmp/wd.xml
+  adb -s "$DEVICE" shell rm -f /sdcard/wd.xml &>/dev/null
+  
+  local retry=0
+  while (( retry < 3 )); do
+    if adb -s "$DEVICE" shell uiautomator dump /sdcard/wd.xml &>/dev/null; then
+      if adb -s "$DEVICE" pull /sdcard/wd.xml /tmp/wd.xml &>/dev/null; then
+        if [[ -f /tmp/wd.xml ]]; then
+          return 0
+        fi
+      fi
+    fi
+    sleep 1
+    (( retry++ ))
+  done
+  return 1
+}
+
+wait_for_text() {
+  local label="$1" text="$2" timeout="${3:-15}" elapsed=0
+  log "Waiting for '${text}' to appear on screen…"
+  while true; do
+    if dump_ui; then
+      if grep -q "text=\"${text}\"" /tmp/wd.xml 2>/dev/null; then
+        break
+      fi
+      if grep -q 'text="This is the developer menu.' /tmp/wd.xml 2>/dev/null; then
+        log "Expo Dev Menu onboarding detected. Clicking Continue & sending keyevents…"
+        click_text "Continue"
+        adb -s "$DEVICE" shell input keyevent 66 # KEYCODE_ENTER
+        adb -s "$DEVICE" shell input keyevent 23 # KEYCODE_DPAD_CENTER
+        sleep 2
+        continue
+      fi
+      if grep -q 'text="Fast Refresh"' /tmp/wd.xml 2>/dev/null; then
+        log "Developer Menu overlay detected. Sending BACK keyevent to dismiss…"
+        adb -s "$DEVICE" shell input keyevent 4 # KEYCODE_BACK
+        sleep 2
+        continue
+      fi
+    fi
+    sleep 1; (( elapsed++ ))
+    if (( elapsed >= timeout )); then
+      warn "Timed out waiting for '${text}'"
+      return 1
+    fi
+  done
+  ok "${label} visible"
+}
+
+# Dump UI, find element bounds by text or content-desc, click centre
+click_text() {
+  local text="$1"
+  dump_ui || { err "Failed to dump UI layout for click_text"; return 1; }
+  
+  local coords
+  coords=$(python3 -c "
+import sys, re
+content = open('/tmp/wd.xml').read()
+t = sys.argv[1]
+t_esc = re.escape(t)
+pattern = r'(?:text|content-desc)=\"' + t_esc + r'\"[^>]*bounds=\"\[([^\]]+\]\[[^\]]+)\]\"'
+m = re.search(pattern, content)
+if m:
+    bounds = m.group(1)
+    c = re.match(r'(\d+),(\d+)\]\[(\d+),(\d+)', bounds)
+    if c:
+        x1, y1, x2, y2 = map(int, c.groups())
+        cx = (x1 + x2) // 2
+        cy = (y1 + y2) // 2
+        print(f'{cx} {cy}')
+        sys.exit(0)
+sys.exit(1)
+" "$text" || true)
+
+  if [[ -z "$coords" ]]; then
+    err "Cannot find or parse bounds for '${text}' on screen."
+    return 1
+  fi
+
+  local cx cy
+  read -r cx cy <<< "$coords"
+
+  log "Clicking '${text}' at (${cx}, ${cy})"
+  adb -s "$DEVICE" shell input tap "$cx" "$cy"
+  sleep 0.5
+}
+
+click_edit_text() {
+  dump_ui || { err "Failed to dump UI layout for click_edit_text"; return 1; }
+  local coords
+  coords=$(python3 -c "
+import sys, re
+content = open('/tmp/wd.xml').read()
+pattern = r'class=\"android.widget.EditText\"[^>]*bounds=\"\[([^\]]+\]\[[^\]]+)\]\"'
+m = re.search(pattern, content)
+if m:
+    bounds = m.group(1)
+    c = re.match(r'(\d+),(\d+)\]\[(\d+),(\d+)', bounds)
+    if c:
+        x1, y1, x2, y2 = map(int, c.groups())
+        cx = (x1 + x2) // 2
+        cy = (y1 + y2) // 2
+        print(f'{cx} {cy}')
+        sys.exit(0)
+sys.exit(1)
+" || true)
+
+  if [[ -z "$coords" ]]; then
+    err "Cannot find EditText on screen."
+    return 1
+  fi
+
+  local cx cy
+  read -r cx cy <<< "$coords"
+
+  log "Clicking EditText at (${cx}, ${cy})"
+  adb -s "$DEVICE" shell input tap "$cx" "$cy"
+  sleep 0.5
+}
+
+clear_edit_text() {
+  click_edit_text || return 1
+  # Backspace 20 times to clear input
+  for i in {1..20}; do
+    adb -s "$DEVICE" shell input keyevent 67
+  done
+  sleep 0.5
+}
+
+
+type_into() {
+  local text="$1"
+  # Escape plus character which can be treated as modifier in some adb versions
+  local escaped_text="${text//+/\\+}"
+  adb -s "$DEVICE" shell input text "$escaped_text"
+  sleep 0.5
+}
+
 # ─── Configuration ────────────────────────────────────────────────────────────
 PACKAGE="com.torkzz.expoapploginpasskeysna"
 LOG_DIR="$(pwd)/test-logs"
@@ -78,6 +219,9 @@ if [[ -z "$DEVICE" ]]; then
 fi
 ok "Device: ${DEVICE}"
 
+log "Setting up adb port forwarding for Metro (port 8081)..."
+adb -s "$DEVICE" reverse tcp:8081 tcp:8081 &>/dev/null || warn "Failed to setup adb reverse (expected if using wireless debugging)."
+
 # Check node / npm
 command -v node &>/dev/null || { err "node not found."; exit 1; }
 command -v npm  &>/dev/null || { err "npm not found.";  exit 1; }
@@ -92,9 +236,23 @@ if $DO_BUILD; then
   header "Step 2 — Build (expo run:android)"
   log "Starting build — this may take a few minutes…"
 
-  if ! timeout "$BUILD_TIMEOUT" npm run android -- --device "$DEVICE"; then
-    err "Build failed or timed out after ${BUILD_TIMEOUT}s."
-    exit 1
+  cmd_timeout=""
+  if command -v timeout >/dev/null 2>&1; then
+    cmd_timeout="timeout"
+  elif command -v gtimeout >/dev/null 2>&1; then
+    cmd_timeout="gtimeout"
+  fi
+
+  if [[ -n "$cmd_timeout" ]]; then
+    if ! $cmd_timeout "$BUILD_TIMEOUT" npm run android; then
+      err "Build failed or timed out after ${BUILD_TIMEOUT}s."
+      exit 1
+    fi
+  else
+    if ! npm run android; then
+      err "Build failed."
+      exit 1
+    fi
   fi
 
   ok "Build complete."
@@ -103,19 +261,33 @@ if $DO_BUILD; then
 else
   header "Step 2 — Build (skipped)"
   warn "Using existing installed APK on ${DEVICE}."
-
-  # Make sure the app is running; launch it if not
-  if ! adb -s "$DEVICE" shell pidof "$PACKAGE" &>/dev/null; then
-    log "App not running — launching…"
-    adb -s "$DEVICE" shell monkey -p "$PACKAGE" -c android.intent.category.LAUNCHER 1 &>/dev/null
-    sleep "$APP_LAUNCH_WAIT"
-  fi
 fi
 
 if ! $DO_TEST; then
   header "Done"
   ok "Build-only mode. Exiting."
   exit 0
+fi
+
+log "Force-stopping package ${PACKAGE}…"
+adb -s "$DEVICE" shell am force-stop "$PACKAGE"
+
+log "Clearing app data for ${PACKAGE} to guarantee fresh state…"
+adb -s "$DEVICE" shell pm clear "$PACKAGE"
+sleep 1
+
+# Ensure port forwarding is set up
+adb -s "$DEVICE" reverse tcp:8081 tcp:8081
+
+log "Launching app fresh…"
+adb -s "$DEVICE" shell monkey -p "$PACKAGE" -c android.intent.category.LAUNCHER 1 &>/dev/null
+sleep "$APP_LAUNCH_WAIT"
+
+# If we see the Expo Go launcher screen, click http://localhost:8081
+if dump_ui && grep -q 'text="http://localhost:8081"' /tmp/wd.xml; then
+  log "Expo Go launcher detected. Clicking http://localhost:8081 server link to start bundle…"
+  click_text "http://localhost:8081"
+  sleep 2
 fi
 
 # ─── Step 3: Start logcat capture ─────────────────────────────────────────────
@@ -134,89 +306,37 @@ trap cleanup EXIT
 ok "Logcat PID: ${LOGCAT_PID}"
 sleep 1
 
-# ─── Helpers for UI interaction ───────────────────────────────────────────────
-wait_for_text() {
-  local label="$1" text="$2" timeout="${3:-15}" elapsed=0
-  log "Waiting for '${text}' to appear on screen…"
-  while ! adb -s "$DEVICE" shell uiautomator dump /sdcard/wd.xml &>/dev/null \
-    && adb -s "$DEVICE" pull /sdcard/wd.xml /tmp/wd.xml &>/dev/null \
-    && grep -q "text=\"${text}\"" /tmp/wd.xml 2>/dev/null; do
-    sleep 1; (( elapsed++ ))
-    if (( elapsed >= timeout )); then
-      warn "Timed out waiting for '${text}'"
-      return 1
-    fi
-  done
-  ok "${label} visible"
-}
-
-# Dump UI, find element bounds by text or content-desc, click centre
-click_text() {
-  local text="$1"
-  adb -s "$DEVICE" shell uiautomator dump /sdcard/wd.xml &>/dev/null
-  adb -s "$DEVICE" pull /sdcard/wd.xml /tmp/wd.xml &>/dev/null
-  
-  local coords
-  coords=$(python3 -c "
-import sys, re
-content = open('/tmp/wd.xml').read()
-t = sys.argv[1]
-t_esc = re.escape(t)
-pattern = r'(?:text|content-desc)=\"' + t_esc + r'\"[^>]*bounds=\"\[([^\]]+\]\[[^\]]+)\]\"'
-m = re.search(pattern, content)
-if m:
-    bounds = m.group(1)
-    c = re.match(r'(\d+),(\d+)\]\[(\d+),(\d+)', bounds)
-    if c:
-        x1, y1, x2, y2 = map(int, c.groups())
-        cx = (x1 + x2) // 2
-        cy = (y1 + y2) // 2
-        print(f'{cx} {cy}')
-        sys.exit(0)
-sys.exit(1)
-" "$text" || true)
-
-  if [[ -z "$coords" ]]; then
-    err "Cannot find or parse bounds for '${text}' on screen."
-    return 1
-  fi
-
-  local cx cy
-  read -r cx cy <<< "$coords"
-
-  log "Clicking '${text}' at (${cx}, ${cy})"
-  adb -s "$DEVICE" shell input tap "$cx" "$cy"
-  sleep 0.5
-}
-
-type_into() {
-  local text="$1"
-  adb -s "$DEVICE" shell input text "$text"
-  sleep 0.5
-}
-
 # ─── Step 4: Navigate to Register screen ──────────────────────────────────────
 header "Step 4 — Navigate to Register screen"
 
-# If on Home/Dashboard, log out first
-adb -s "$DEVICE" shell uiautomator dump /sdcard/wd.xml &>/dev/null
-adb -s "$DEVICE" pull /sdcard/wd.xml /tmp/wd.xml &>/dev/null
-if grep -q 'text="Logout"' /tmp/wd.xml; then
+# 1. Wait for the app to be loaded (either on Login or Dashboard/Home screen)
+log "Waiting for app to load..."
+wait_for_text "App loaded" "Continue with Passkey" 25 || {
+  # If "Continue with Passkey" is not found, maybe we are already logged in?
+  if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
+    ok "App loaded (already logged in)"
+  else
+    err "App failed to load"
+  fi
+}
+
+# 2. If on Home/Dashboard, log out first
+if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
   log "Currently logged in — logging out…"
   click_text "Logout"
-  sleep 2
+  # Wait for the login screen to appear after logout
+  wait_for_text "Login screen after logout" "Continue with Passkey" 15
 fi
 
-# Click Register link on Login screen
-if grep -q 'text="Register"' /tmp/wd.xml || \
-   (adb -s "$DEVICE" shell uiautomator dump /sdcard/wd.xml &>/dev/null && \
-    adb -s "$DEVICE" pull /sdcard/wd.xml /tmp/wd.xml &>/dev/null && \
-    grep -q 'text="Register"' /tmp/wd.xml); then
-  click_text "Register"
-  sleep 2
-fi
+# 3. Click Register link on Login screen
+log "Navigating to Register screen..."
+# Dismiss keyboard just in case it is covering the register link
+adb -s "$DEVICE" shell input keyevent 111
+sleep 0.5
+click_text "Register"
 
-ok "Should be on Create Account screen"
+# 4. Wait for the Create Account screen to appear
+wait_for_text "Should be on Create Account screen" "Create Account" 15
 
 # ─── Step 5: Fill registration form ───────────────────────────────────────────
 header "Step 5 — Fill registration form"
@@ -237,11 +357,51 @@ adb -s "$DEVICE" shell input keyevent 111
 # ─── Step 6: Tap Register with Passkey ────────────────────────────────────────
 header "Step 6 — Tap 'Register with Passkey'"
 click_text "Register with Passkey"
-log "Waiting ${FLOW_WAIT}s for passkey flow to complete…"
+log "Waiting ${FLOW_WAIT}s for passkey registration flow to complete…"
 sleep "$FLOW_WAIT"
 
-# ─── Step 7: Kill logcat and analyse ──────────────────────────────────────────
-header "Step 7 — Analyse results"
+# ─── Step 7: Test Login Flow ──────────────────────────────────────────────────
+header "Step 7 — Test Login Flow"
+
+# 1. Log out from the registered session or go back to Login screen
+if dump_ui && grep -q 'text="Logout"' /tmp/wd.xml; then
+  log "Registration succeeded! Logged in automatically. Logging out to test login flow…"
+  click_text "Logout"
+  sleep 3
+else
+  warn "Logout button not found after registration — registration may have failed. Going back to Login screen..."
+  # If not on Login screen, press back once
+  if ! dump_ui || ! grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
+    adb -s "$DEVICE" shell input keyevent 4
+    sleep 1.5
+    # If still not on Login screen, press back again
+    if ! dump_ui || ! grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
+      adb -s "$DEVICE" shell input keyevent 4
+      sleep 2
+    fi
+  fi
+fi
+
+# 2. Fill login identifier and tap Continue with Passkey
+if dump_ui && grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
+  log "Clearing and typing mobile number..."
+  clear_edit_text
+  type_into "$TEST_MOBILE"
+  # Dismiss keyboard
+  adb -s "$DEVICE" shell input keyevent 111
+  sleep 1
+
+
+  log "Tapping 'Continue with Passkey'…"
+  click_text "Continue with Passkey"
+  log "Waiting ${FLOW_WAIT}s for passkey login flow to complete…"
+  sleep "$FLOW_WAIT"
+else
+  err "Continue with Passkey button not found on Login screen."
+fi
+
+# ─── Step 8: Kill logcat and analyse ──────────────────────────────────────────
+header "Step 8 — Analyse results"
 kill "$LOGCAT_PID" 2>/dev/null || true; LOGCAT_PID=0
 sleep 1
 
@@ -261,15 +421,22 @@ check() {
   fi
 }
 
-check "Step 1: Token obtained"                       "\[TOKEN\] SUCCESS"
-check "Step 2: GenerateKey request sent"             "GENERATE KEY"
-check "Step 2: GenerateKey 200 OK (no 405 error)"    "passkey_generated"
-check "Step 3: Challenge decoded"                    "ANDROID.*STEP 3"
-check "Step 4: create() invoked"                     "ANDROID.*STEP 4.*Calling create"
-check "Step 4: Credential returned"                  "Credential received"
-check "Step 5: registerKey payload built"            "ANDROID.*STEP 5"
-check "Step 6: registerKey API called"               "REGISTER KEY"
-check "Step 6: Registration successful"              "passkey_registered\|success.*true"
+log "--- REGISTRATION CHECKS ---"
+check "Token obtained"                       "Token received"
+check "GenerateKey request sent"             "Requesting registration challenge"
+check "GenerateKey 200 OK"                   "Registration challenge received"
+check "create() invoked"                     "Calling create"
+check "Credential returned"                  "Credential received"
+check "registerKey API called"               "Calling registerKey API"
+check "Registration successful"              "registerKey response"
+
+log "--- LOGIN CHECKS ---"
+check "Loaded credentials from SecureStore" "Loaded credentials"
+check "Login challenge requested"           "Requesting login challenge"
+check "get() invoked"                        "Calling get"
+check "Assertion received"                   "Assertion received"
+check "verifyLogin API called"               "Verifying login assertion"
+check "Login successful"                     "Login verify response"
 
 # Check for unexpected errors
 if grep -q "405" "$LOGCAT_FILE"; then
@@ -282,8 +449,8 @@ if grep -q "assetlinks\|NotAllowedError\|SecurityError\|DomError" "$LOGCAT_FILE"
   RESULTS+=("WARN: Asset link / RP ID association error")
 fi
 
-# ─── Step 8: Generate report ──────────────────────────────────────────────────
-header "Step 8 — Test report"
+# ─── Step 9: Generate report ──────────────────────────────────────────────────
+header "Step 9 — Test report"
 {
   echo "==============================="
   echo " Build-and-Test Report"

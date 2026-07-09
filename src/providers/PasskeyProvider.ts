@@ -1,9 +1,11 @@
 import { AuthenticationProvider } from './AuthenticationProvider';
 import { PasskeyService } from '../services/PasskeyService';
 import { AuthResult, AuthenticationMethod } from '../types/auth';
+import { LoginVerifyRequest } from '../types/passkey';
 import { logger } from '../utils/logger';
 import { demoPasskeyStore } from '../services/DemoPasskeyStore';
 import { Platform } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 import { create,
   get,
   isSupported, } from 'react-native-passkeys';
@@ -25,7 +27,11 @@ export class PasskeyProvider implements AuthenticationProvider {
     this.passkeyService = passkeyService;
   }
 
-  private decodeMimeBase64(value: string): string {
+  private decodeMimeBase64(value: string | undefined | null): string {
+    if (!value) {
+      console.warn('[PasskeyProvider] decodeMimeBase64 received undefined/null/empty value');
+      return '';
+    }
     const prefix = '=?BINARY?B?';
     const suffix = '?=';
 
@@ -41,23 +47,29 @@ export class PasskeyProvider implements AuthenticationProvider {
       .replace(/=+$/, '');
   }
 
-public async login(): Promise<AuthResult> {
-  console.log('PasskeyProvider: Starting login flow');
+  private toStandardBase64(base64url: string): string {
+    let base64 = base64url
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    const pad = base64.length % 4;
+    if (pad === 2) {
+      base64 += '==';
+    } else if (pad === 3) {
+      base64 += '=';
+    }
+    return base64;
+  }
+
+
+  public async login(params?: { userId?: string }): Promise<AuthResult> {
+    console.log('PasskeyProvider: Starting login flow');
 
   try {
     // -------------------------------------------------------------------------
     // STEP 0: Load registration identifiers
     // -------------------------------------------------------------------------
-
-    // TODO:
-    // Replace these with your actual storage implementation.
-    //
-    // Example:
-    // const pinCode = await SecureStore.getItemAsync('pin_code');
-    // const refCode = await SecureStore.getItemAsync('ref_code');
-
-    const pinCode = '';
-    const refCode = '';
+    const pinCode = await SecureStore.getItemAsync('pin_code') || '';
+    const refCode = await SecureStore.getItemAsync('ref_code') || '';
 
     console.log('[LOGIN][STEP 0] Loaded credentials', {
       pinCode,
@@ -89,6 +101,17 @@ public async login(): Promise<AuthResult> {
     console.log('[LOGIN][STEP 2] Login challenge received');
     console.log(JSON.stringify(challengeResponse, null, 2));
 
+    // Extract the publicKey options from the nested key.publicKey structure
+    const publicKeyChallenge = challengeResponse.key.publicKey;
+
+    // Use the pin_code / ref_code echoed back from the *login challenge* response
+    // (they may differ from the ones stored in SecureStore if the server rotated them)
+    const loginPinCode = challengeResponse.pin_code || pinCode;
+    const loginRefCode = challengeResponse.ref_code || refCode;
+
+    console.log('[LOGIN][STEP 2] Extracted publicKey challenge options');
+    console.log(JSON.stringify(publicKeyChallenge, null, 2));
+
     // -------------------------------------------------------------------------
     // ANDROID
     // -------------------------------------------------------------------------
@@ -96,15 +119,15 @@ public async login(): Promise<AuthResult> {
     if (Platform.OS === 'android') {
       console.log('[ANDROID] Native Passkey login');
 
-      const publicKeyOptions = {
-        ...challengeResponse,
+      const publicKeyOptions: any = {
+        ...publicKeyChallenge,
 
         challenge: this.decodeMimeBase64(
-          challengeResponse.challenge,
+          publicKeyChallenge.challenge,
         ),
 
         allowCredentials:
-          challengeResponse.allowCredentials?.map((credential) => ({
+          publicKeyChallenge.allowCredentials?.map((credential) => ({
             ...credential,
             id: this.decodeMimeBase64(credential.id),
           })),
@@ -113,32 +136,39 @@ public async login(): Promise<AuthResult> {
       console.log('[ANDROID] PublicKey Options');
       console.log(JSON.stringify(publicKeyOptions, null, 2));
 
-      // TODO:
-      // const assertion = await get(publicKeyOptions);
-      //
-      // if (!assertion) {
-      //   throw new Error('Passkey login cancelled.');
-      // }
-      //
-      // const loginResponse =
-      //   await this.passkeyService.verifyLogin({
-      //     ...
-      //   });
-      //
-      // return {
-      //   success: loginResponse.success,
-      //   method: this.getType(),
-      //   token: loginResponse.token,
-      //   message: loginResponse.message,
-      // };
+      console.log('[ANDROID] Calling get()...');
+      const assertion = await get(publicKeyOptions);
+
+      if (!assertion) {
+        throw new Error('Passkey login cancelled.');
+      }
+
+      console.log('[ANDROID] Assertion received');
+      console.log(JSON.stringify(assertion, null, 2));
+
+      const loginPayload: LoginVerifyRequest = {
+        pin_code: loginPinCode,
+        ref_code: loginRefCode,
+        credentialId: this.toStandardBase64(assertion.id),
+        clientDataJSON: assertion.response.clientDataJSON,
+        authenticatorData: assertion.response.authenticatorData,
+        signature: assertion.response.signature,
+      };
+
+      console.log('[ANDROID] Verifying login assertion...');
+      const loginResponse = await this.passkeyService.verifyLogin(loginPayload);
+
+      console.log('[ANDROID] Login verify response:', JSON.stringify(loginResponse, null, 2));
 
       return {
-        success: false,
-        code: 'ANDROID_NATIVE_NOT_IMPLEMENTED',
+        success: loginResponse.success,
         method: this.getType(),
-        challenge: challengeResponse,
-        message:
-          'Android native Passkey login has not been implemented yet.',
+        accessToken: loginResponse.token,
+        user: {
+          id: pinCode,
+          mobileNumber: pinCode,
+        },
+        message: loginResponse.message,
       };
     }
 
@@ -214,7 +244,7 @@ public async register(params: { username: string; mobileNumber: string }): Promi
 
     if (Platform.OS === 'android') {
       console.log('[ANDROID] Native Passkey registration');
-
+      
       // -----------------------------------------------------------------------
       // STEP 3: Build publicKey options for create()
       // -----------------------------------------------------------------------
@@ -228,7 +258,7 @@ public async register(params: { username: string; mobileNumber: string }): Promi
       console.log('[ANDROID][STEP 3] Raw user.id (backend):', rawPublicKey.user.id);
       console.log('[ANDROID][STEP 3] Decoded user.id (Base64URL):', decodedUserId);
 
-      const publicKeyOptions = {
+      const publicKeyOptions: any = {
         ...rawPublicKey,
         challenge: decodedChallenge,
         user: {
@@ -288,9 +318,22 @@ public async register(params: { username: string; mobileNumber: string }): Promi
       console.log('[ANDROID][STEP 6] registerKey response:');
       console.log(JSON.stringify(registerResponse, null, 2));
 
+      if (registerResponse.success) {
+        console.log('[ANDROID] Saving credentials to SecureStore...');
+        await Promise.all([
+          SecureStore.setItemAsync('pin_code', challengeResponse.pin_code),
+          SecureStore.setItemAsync('ref_code', challengeResponse.ref_code),
+        ]);
+      }
+
       return {
         success: registerResponse.success,
         method: this.getType(),
+        user: {
+          id: params.mobileNumber,
+          username: params.username,
+          mobileNumber: params.mobileNumber,
+        },
         message: registerResponse.message ?? 'Passkey registered successfully.',
       };
     }
