@@ -7,17 +7,17 @@
 
 export const API = {
   AUTH: {
-    TOKEN: '/auth/token',
+    TOKEN: 'auth/token',
   },
   PASSKEY: {
-    GENERATE_KEY: '/passkey/generate/key',
-    REGISTER: '/passkey/register/key',
-    LOGIN_REQUEST: '/passkey/login/request',
-    LOGIN_VERIFY: '/passkey/login/verify',
+    GENERATE_KEY: 'passkey/generate/key',
+    REGISTER: 'passkey/register/key',
+    LOGIN_REQUEST: 'passkey/login/request',
+    LOGIN_VERIFY: 'passkey/login/verify',
   },
   SNA: {
-    LOGIN_REQUEST: '/sna/api/login/request',
-    LOGIN_VERIFY: '/sna/api/login/verify',
+    LOGIN_REQUEST: 'sna/api/login/request',
+    LOGIN_VERIFY: 'sna/api/login/verify',
   },
 } as const;
 

@@ -24,7 +24,7 @@ const getEnvVar = (name: string, defaultValue?: string): string => {
 };
 
 export const ENV: EnvConfig = {
-  API_BASE_URL: getEnvVar('EXPO_PUBLIC_API_BASE_URL', 'https://dev.m360.com.ph/verify/v1'),
+  API_BASE_URL: getEnvVar('EXPO_PUBLIC_API_BASE_URL', 'https://dev.m360.com.ph/verify/v1/'),
   VERIFY_CLIENT_ID: getEnvVar('EXPO_PUBLIC_VERIFY_CLIENT_ID', ''),
   VERIFY_CLIENT_SECRET: getEnvVar('EXPO_PUBLIC_VERIFY_CLIENT_SECRET', ''),
   APP_NAME: getEnvVar('EXPO_PUBLIC_APP_NAME', 'Verify Demo'),

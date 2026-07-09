@@ -47,7 +47,8 @@ export class PasskeyProvider implements AuthenticationProvider {
       .replace(/=+$/, '');
   }
 
-  private toStandardBase64(base64url: string): string {
+  private toStandardBase64(base64url: string | undefined | null): string {
+    if (!base64url) return '';
     let base64 = base64url
       .replace(/-/g, '+')
       .replace(/_/g, '/');
@@ -150,9 +151,9 @@ export class PasskeyProvider implements AuthenticationProvider {
         pin_code: loginPinCode,
         ref_code: loginRefCode,
         credentialId: this.toStandardBase64(assertion.id),
-        clientDataJSON: assertion.response.clientDataJSON,
-        authenticatorData: assertion.response.authenticatorData,
-        signature: assertion.response.signature,
+        clientDataJSON: this.toStandardBase64(assertion.response.clientDataJSON),
+        authenticatorData: this.toStandardBase64(assertion.response.authenticatorData),
+        signature: this.toStandardBase64(assertion.response.signature),
       };
 
       console.log('[ANDROID] Verifying login assertion...');
@@ -300,10 +301,10 @@ public async register(params: { username: string; mobileNumber: string }): Promi
       const registerPayload = {
         pin_code:          challengeResponse.pin_code,
         ref_code:          challengeResponse.ref_code,
-        credentialId:      credential.id,
+        credentialId:      this.toStandardBase64(credential.id),
         transports:        credential.response.transports,
-        clientDataJSON:    credential.response.clientDataJSON,
-        attestationObject: credential.response.attestationObject,
+        clientDataJSON:    this.toStandardBase64(credential.response.clientDataJSON),
+        attestationObject: this.toStandardBase64(credential.response.attestationObject),
       };
 
       console.log('[ANDROID][STEP 5] registerKey payload:');

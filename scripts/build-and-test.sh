@@ -286,7 +286,7 @@ sleep "$APP_LAUNCH_WAIT"
 # If we see the Expo Go launcher screen, click http://localhost:8081
 if dump_ui && grep -q 'text="http://localhost:8081"' /tmp/wd.xml; then
   log "Expo Go launcher detected. Clicking http://localhost:8081 server link to start bundle…"
-  click_text "http://localhost:8081"
+  click_text "http://localhost:8081" || true
   sleep 2
 fi
 
@@ -357,8 +357,35 @@ adb -s "$DEVICE" shell input keyevent 111
 # ─── Step 6: Tap Register with Passkey ────────────────────────────────────────
 header "Step 6 — Tap 'Register with Passkey'"
 click_text "Register with Passkey"
-log "Waiting ${FLOW_WAIT}s for passkey registration flow to complete…"
-sleep "$FLOW_WAIT"
+log "Waiting for native passkey registration flow to complete..."
+for i in {1..15}; do
+  sleep 1
+  if dump_ui; then
+    grep -o -E 'text="[^"]{1,50}"' /tmp/wd.xml | grep -v -E 'text=""' | head -n 40 || true
+    if grep -q -i 'text="Continue"' /tmp/wd.xml; then
+      log "Clicking 'Continue' button..."
+      click_text "Continue" || true
+    elif grep -q -i 'text="Create"' /tmp/wd.xml; then
+      log "Clicking 'Create' button..."
+      click_text "Create" || true
+    elif grep -q -i "text=\"${TEST_USERNAME}\"" /tmp/wd.xml; then
+      log "Clicking username '${TEST_USERNAME}' selector..."
+      click_text "${TEST_USERNAME}" || true
+    elif grep -q -i 'text="Use screen lock"' /tmp/wd.xml; then
+      log "Clicking 'Use screen lock' button..."
+      click_text "Use screen lock" || true
+    elif grep -q -i 'text="Use fingerprint"' /tmp/wd.xml; then
+      log "Clicking 'Use fingerprint' button..."
+      click_text "Use fingerprint" || true
+    elif grep -q -i 'text="Use"' /tmp/wd.xml; then
+      log "Clicking 'Use' button..."
+      click_text "Use" || true
+    elif grep -q -i 'text="OK"' /tmp/wd.xml; then
+      log "Clicking 'OK' button..."
+      click_text "OK" || true
+    fi
+  fi
+done
 
 # ─── Step 7: Test Login Flow ──────────────────────────────────────────────────
 header "Step 7 — Test Login Flow"
@@ -394,8 +421,35 @@ if dump_ui && grep -q 'text="Continue with Passkey"' /tmp/wd.xml; then
 
   log "Tapping 'Continue with Passkey'…"
   click_text "Continue with Passkey"
-  log "Waiting ${FLOW_WAIT}s for passkey login flow to complete…"
-  sleep "$FLOW_WAIT"
+  log "Waiting for native passkey login flow to complete..."
+  for i in {1..15}; do
+    sleep 1
+    if dump_ui; then
+      grep -o -E 'text="[^"]{1,50}"' /tmp/wd.xml | grep -v -E 'text=""' | head -n 40 || true
+      if grep -q -i 'text="Continue"' /tmp/wd.xml; then
+        log "Clicking 'Continue' button..."
+        click_text "Continue" || true
+      elif grep -q -i 'text="Create"' /tmp/wd.xml; then
+        log "Clicking 'Create' button..."
+        click_text "Create" || true
+      elif grep -q -i "text=\"${TEST_USERNAME}\"" /tmp/wd.xml; then
+        log "Clicking username '${TEST_USERNAME}' selector..."
+        click_text "${TEST_USERNAME}" || true
+      elif grep -q -i 'text="Use screen lock"' /tmp/wd.xml; then
+        log "Clicking 'Use screen lock' button..."
+        click_text "Use screen lock" || true
+      elif grep -q -i 'text="Use fingerprint"' /tmp/wd.xml; then
+        log "Clicking 'Use fingerprint' button..."
+        click_text "Use fingerprint" || true
+      elif grep -q -i 'text="Use"' /tmp/wd.xml; then
+        log "Clicking 'Use' button..."
+        click_text "Use" || true
+      elif grep -q -i 'text="OK"' /tmp/wd.xml; then
+        log "Clicking 'OK' button..."
+        click_text "OK" || true
+      fi
+    fi
+  done
 else
   err "Continue with Passkey button not found on Login screen."
 fi
@@ -413,11 +467,11 @@ check() {
   if grep -q "$pattern" "$LOGCAT_FILE" 2>/dev/null; then
     ok "  PASS  ${label}"
     RESULTS+=("PASS: ${label}")
-    (( PASS++ ))
+    (( PASS++ )) || true
   else
     err "  FAIL  ${label}"
     RESULTS+=("FAIL: ${label}")
-    (( FAIL++ ))
+    (( FAIL++ )) || true
   fi
 }
 

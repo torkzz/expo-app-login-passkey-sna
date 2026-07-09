@@ -68,22 +68,26 @@ class ApiClient {
           config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
 
-        // Log request (Sensitive data exclusion handled by logging policy)
-      if (ENV.ENABLE_NETWORK_LOGGING) {
-        const fullUrl = new URL(
-          config.url ?? '',
-          config.baseURL ?? ''
-        ).toString();
+        // Log request
+        if (ENV.ENABLE_NETWORK_LOGGING) {
+          const fullUrl = new URL(
+            config.url ?? '',
+            config.baseURL ?? ''
+          ).toString();
 
-        console.log('======================================');
-        console.log('[HTTP REQUEST]');
-        console.log(`${config.method?.toUpperCase()} ${fullUrl}`);
-        console.log('Base URL:', config.baseURL);
-        console.log('Path:', config.url);
-        console.log('Request ID:', requestId);
-        console.log('Params:', config.params);
-        console.log('======================================');
-      }
+          console.log('======================================');
+          console.log('[HTTP REQUEST]');
+          console.log(`${config.method?.toUpperCase()} ${fullUrl}`);
+          console.log('Request ID:', requestId);
+          console.log('Headers:', JSON.stringify(config.headers, null, 2));
+          if (config.params) {
+            console.log('Params:', JSON.stringify(config.params, null, 2));
+          }
+          if (config.data) {
+            console.log('Body:', typeof config.data === 'string' ? config.data : JSON.stringify(config.data, null, 2));
+          }
+          console.log('======================================');
+        }
 
         return config;
       },
@@ -113,6 +117,10 @@ class ApiClient {
           console.log('Status:', response.status);
           console.log('Duration:', `${duration}ms`);
           console.log('Request ID:', requestId);
+          console.log('Headers:', JSON.stringify(response.headers, null, 2));
+          if (response.data) {
+            console.log('Body:', typeof response.data === 'string' ? response.data : JSON.stringify(response.data, null, 2));
+          }
           console.log('======================================');
         }
 
@@ -123,7 +131,22 @@ class ApiClient {
         const normalizedError = mapError(error, requestId);
 
         if (ENV.ENABLE_NETWORK_LOGGING) {
-          logger.error(`API Error: ${error.config?.method?.toUpperCase()} ${error.config?.url}`, normalizedError);
+          const method = error.config?.method?.toUpperCase() || 'UNKNOWN';
+          const url = error.config?.url || 'UNKNOWN';
+          console.log('======================================');
+          console.log('[HTTP ERROR]');
+          console.log(`${method} ${url}`);
+          console.log('Request ID:', requestId);
+          if (error.response) {
+            console.log('Status:', error.response.status);
+            console.log('Headers:', JSON.stringify(error.response.headers, null, 2));
+            console.log('Body:', typeof error.response.data === 'string' ? error.response.data : JSON.stringify(error.response.data, null, 2));
+          } else {
+            console.log('Message:', error.message);
+          }
+          console.log('======================================');
+
+          logger.error(`API Error: ${method} ${url}`, normalizedError);
         }
 
         return Promise.reject(normalizedError);
