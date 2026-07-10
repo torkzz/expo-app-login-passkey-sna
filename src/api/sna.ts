@@ -1,4 +1,4 @@
-import { apiClient } from './axios';
+import { snaClient } from './axios';
 import { API } from '../config/api';
 import {
   SNALoginRequest,
@@ -17,7 +17,7 @@ export const SNAApi = {
    * Request an SNA login challenge.
    */
   loginRequest: async (request: SNALoginRequest): Promise<SNALoginResponse> => {
-    const response = await apiClient.post<SNALoginResponse>(API.SNA.LOGIN_REQUEST, request);
+    const response = await snaClient.post<SNALoginResponse>(API.SNA.LOGIN_REQUEST, request);
     return response.data;
   },
 
@@ -25,7 +25,7 @@ export const SNAApi = {
    * Verify an SNA login.
    */
   loginVerify: async (request: SNAVerifyRequest): Promise<SNAVerifyResponse> => {
-    const response = await apiClient.post<SNAVerifyResponse>(API.SNA.LOGIN_VERIFY, request);
+    const response = await snaClient.post<SNAVerifyResponse>(API.SNA.LOGIN_VERIFY, request);
     return response.data;
   },
 };

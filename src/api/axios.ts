@@ -23,12 +23,12 @@ declare module 'axios' {
  * Singleton Axios client for the application.
  */
 class ApiClient {
-  private static instance: ApiClient;
+  private static instances: Map<string, ApiClient> = new Map();
   private axiosInstance: AxiosInstance;
 
-  private constructor() {
+  private constructor(baseURL: string) {
     this.axiosInstance = axios.create({
-      baseURL: ENV.API_BASE_URL,
+      baseURL,
       timeout: ENV.API_TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
@@ -39,11 +39,11 @@ class ApiClient {
     this.setupInterceptors();
   }
 
-  public static getInstance(): ApiClient {
-    if (!ApiClient.instance) {
-      ApiClient.instance = new ApiClient();
+  public static getInstance(baseURL: string): ApiClient {
+    if (!ApiClient.instances.has(baseURL)) {
+      ApiClient.instances.set(baseURL, new ApiClient(baseURL));
     }
-    return ApiClient.instance;
+    return ApiClient.instances.get(baseURL)!;
   }
 
   public getAxios(): AxiosInstance {
@@ -158,4 +158,11 @@ class ApiClient {
   }
 }
 
-export const apiClient = ApiClient.getInstance().getAxios();
+// Passkey client → https://dev.m360.com.ph/verify/v1/
+export const passkeyClient = ApiClient.getInstance(ENV.API_BASE_URL_PASSKEY).getAxios();
+
+// SNA client → https://stg-verify.m360.com.ph/v1/
+export const snaClient = ApiClient.getInstance(ENV.API_BASE_URL_SNA).getAxios();
+
+// Backward-compatible alias (defaults to passkey client)
+export const apiClient = passkeyClient;

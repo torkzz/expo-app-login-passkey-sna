@@ -6,7 +6,8 @@
  */
 
 interface EnvConfig {
-  API_BASE_URL: string;
+  API_BASE_URL_PASSKEY: string;
+  API_BASE_URL_SNA: string;
   VERIFY_CLIENT_ID: string;
   VERIFY_CLIENT_SECRET: string;
   APP_NAME: string;
@@ -24,7 +25,8 @@ const getEnvVar = (name: string, defaultValue?: string): string => {
 };
 
 export const ENV: EnvConfig = {
-  API_BASE_URL: getEnvVar('EXPO_PUBLIC_API_BASE_URL', 'https://dev.m360.com.ph/verify/v1/'),
+  API_BASE_URL_PASSKEY: getEnvVar('EXPO_PUBLIC_API_BASE_URL_PASSKEY', 'https://dev.m360.com.ph/verify/v1/'),
+  API_BASE_URL_SNA: getEnvVar('EXPO_PUBLIC_API_BASE_URL_SNA', 'https://stg-verify.m360.com.ph/v1/'),
   VERIFY_CLIENT_ID: getEnvVar('EXPO_PUBLIC_VERIFY_CLIENT_ID', ''),
   VERIFY_CLIENT_SECRET: getEnvVar('EXPO_PUBLIC_VERIFY_CLIENT_SECRET', ''),
   APP_NAME: getEnvVar('EXPO_PUBLIC_APP_NAME', 'Verify Demo'),
@@ -35,7 +37,8 @@ export const ENV: EnvConfig = {
 
 // Validation
 const requiredVars: (keyof EnvConfig)[] = [
-  'API_BASE_URL',
+  'API_BASE_URL_PASSKEY',
+  'API_BASE_URL_SNA',
   'VERIFY_CLIENT_ID',
   'VERIFY_CLIENT_SECRET',
 ];
