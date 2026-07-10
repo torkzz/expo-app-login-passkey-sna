@@ -21,7 +21,6 @@ A React Native (Expo SDK 54) Android application demonstrating two passwordless 
 - [Key Dependencies](#key-dependencies)
 - [Running the App](#running-the-app)
 - [Testing](#testing)
-- [Known Issues & Notes](#known-issues--notes)
 
 ---
 
